@@ -14,3 +14,4 @@ vignettes/*.pdf
 
 #Jekyll site directory
 _site
+.Rproj.user
