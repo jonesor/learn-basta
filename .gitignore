@@ -12,5 +12,8 @@
 vignettes/*.html
 vignettes/*.pdf
 
-#Jekyll site directory
+#Jekyll site directory and associated build files
 _site
+Temp.Rmd
+Temp.md
+Temp.html
