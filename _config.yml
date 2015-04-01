@@ -1,6 +1,0 @@
-name: Learn BaSTA
-markdown: redcarpet
-highlighter: pygments
-baseurl: "/learn-basta"
-
-exclude: ["pandoc", "book", "extras"]
