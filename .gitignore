@@ -15,3 +15,5 @@ vignettes/*.pdf
 Temp.html
 Temp.Rmd
 *.Rproj
+_site
+
