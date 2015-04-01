@@ -1,0 +1,11 @@
+---
+title: Bug squashing
+layout: default
+---
+
+# Bug squashing
+
+This is a complex package and there are undoubtedly a few bugs that need to be squashed. Also, although this site tries to guide users through the intricacies of using BaSTA, there may be errors, or perhaps better ways of explaining or demonstrating things. There may also be things we have not covered:
+
+* If you find bugs, or have questions/comments, please let us know. The best way to do that is to send us an email on the [BaSTA mailing list](http://lists.r-forge.r-project.org/mailman/listinfo/basta-users). Your feedback is important to us!.
+
