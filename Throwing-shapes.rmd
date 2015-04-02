@@ -15,6 +15,7 @@ output: bookdown::html_chapter
 ```{r, echo=FALSE, results='hide', message=FALSE}
 setwd("~/learn-basta")
 library(BaSTA)
+library(snowfall)
 dat <- read.csv("data/fixedData.csv", header = TRUE)
 ```
 

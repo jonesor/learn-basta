@@ -1,0 +1,69 @@
+---
+title: Introduction
+layout: default
+output: bookdown::html_chapter
+---
+<!---
+1. Use standard R Markdown.
+2. Headings with "##" will be automatically turned into table of contents. Therefore, for longer tutorials please use this facility.
+3. Check that R studio will knit into an HTML document.
+4. You can contribute the .rmd file via GitHub (https://github.com/jonesor/learn-basta), **to the master branch ONLY**. To do that you must be a collaborator on the repository (contact me with your username), or you can fork the repository and send a pull request (https://help.github.com/articles/using-pull-requests/).
+5. Alternatively you can email me the *rmd file and associated files (e.g. any figures/diagrams.)
+6. I will then compile the site on my computer and push it to the gh-pages branch (which is where the website lives). You could also do this, but you will need to have Jekyll and pandoc installed.
+-->
+
+## Introduction {#intro}
+
+Since the BaSTA package was published in 2012 it has been cited a few times. Initially these citations were simply highlighting the availability of BaSTA and the utility of its novel approach. More recently researchers have been using (and citing!) BaSTA for their own data analysis. The following bibliography includes all of the papers we know of.
+
+## BaSTA citations {#basta-cites}
+
+## 2015 {#cite-2015}
+
+Boonekamp, J.J., Salomons, M., Bouwhuis, S., Dijkstra, C. & Verhulst, S. (2015). Addendum to: Reproductive effort accelerates actuarial senescence in wild birds: an experimental study. Ecology Letters (2015) 18: 315–315. doi: 10.1111/ele.12404
+
+Moustakas, A. and Evans, M. (2015) Effects of growth rate, size, and light availability on tree survival across life stages: a demographic analysis accounting for missing values and small sample sizes. BMC Ecology 2015, 15:6  doi: 10.1186/s12898-015-0038-8
+
+## 2014 {#cite-2014}
+
+Boonekamp, J.J., Salomons, M., Bouwhuis, S., Dijkstra, C. & Verhulst, S. (2014). Reproductive effort accelerates actuarial senescence in wild birds: an experimental study. Ecol. Lett., 17, 599–605.
+
+Koons, D. N., Gamelon, M., Gaillard, J.-M., Aubry, L. M., Rockwell, R. F., Klein, F., Choquet, R., Gimenez, O. (2014), Methods for studying cause-specific senescence in the wild. Methods in Ecology and Evolution, 5: 924–933. doi: 10.1111/2041-210X.12239
+
+Korner-Nievergelta, K & Robinson, R.A. (2014) Introducing the R-package `birdring`. Ringing & Migration. 29(1): 51-61. doi: 10.1080/03078698.2014.933053
+
+McDonald, J.L., Graham C. Smith , Robbie A. McDonald , Richard J. Delahay , Dave Hodgson (2014) Mortality trajectory analysis reveals the drivers of sex-specific epidemiology in natural wildlife–disease interactions. Proc. R. Soc. B: 2014 281 20140526; doi: 10.1098/rspb.2014.0526. 
+
+Merow, C., Dahlgren, J. P., Metcalf, C. J. E., Childs, D. Z., Evans, M. E.K., Jongejans, E. , Record, S., Rees, M., Salguero-Gómez, R., McMahon, S. M. (2014), Advancing population ecology with integral projection models: a practical guide. Methods in Ecology and Evolution, 5: 99–110. doi: 10.1111/2041-210X.12146
+
+Miller, D.A., Janzen, F.J., Fellers, G.M., Kleeman, P.M., Bronikowski, A.M. (2014) Biodemography of Ectothermic Tetrapods Provides Insights into the Evolution and Plasticity of Mortality Patterns. In: Sociality, Hierarchy, Health:: Comparative Biodemography: Papers from a Workshop. Committee on Population, Division of Behavioral and Social Sciences and Education, National Research Council. National Academies Press, 400pp. 
+
+Moni, M.A. and Liò, P. (2014) comoR: a software for disease comorbidity risk assessment. Journal of Clinical Bioinformatics. 4:8. DOI: 10.1186/2043-9113-4-8.
+
+Vinicius L, Mace R, Migliano A (2014) Variation in Male Reproductive Longevity across Traditional Societies. PLoS ONE 9(11): e112236. doi: 10.1371/journal.pone.0112236
+
+## 2013 {#cite-2013}
+
+Hanson N, Thompson D, Duck C, Moss S, Lonergan M (2013) Pup Mortality in a Rapidly Declining Harbour Seal (_Phoca vitulina_) Population. PLoS ONE 8(11): e80727. doi: 10.1371/journal.pone.0080727
+
+Laake, J. L., Johnson, D. S., Conn, P. B. (2013), marked: an R package for maximum likelihood and Markov Chain Monte Carlo analysis of capture–recapture data. Methods in Ecology and Evolution, 4: 885–890. doi: 10.1111/2041-210X.12065
+
+Matechou, E., Pledger, S., Efford, M., Morgan, B. J.T., Thomson, D. L. (2013), Estimating age-specific survival when age is unknown: open population capture–recapture models with age structure and heterogeneity. Methods in Ecology and Evolution, 4: 654–664. doi: 10.1111/2041-210X.12061
+
+Salguero-Gómez, R., Shefferson, R. P., Hutchings, M. J. (2013), Plants do not count… or do they? New perspectives on the universality of senescence. Journal of Ecology, 101: 545–554. doi: 10.1111/1365-2745.12089
+
+Zajitschek, F., Jin, T., Colchero, F., and Maklakov, A.A. (2013) Aging Differently: Diet- and Sex-Dependent Late-Life Mortality Patterns in _Drosophila melanogaster_. J Gerontol A Biol Sci Med Sci. doi: 10.1093/gerona/glt158
+
+## 2012 {#cite-2012}
+
+Baudisch, A. and Vaupel, J.W. Getting to the root of aging. Science. 2012 Nov 2; 338(6107): 618–619. doi:  10.1126/science.1226467
+
+
+
+
+
+
+
+
+
+
