@@ -20,7 +20,7 @@ References used in this website.
 
 <!-- references to go here in ordered list -->
 
-* A
-* B
-* C
+* Colchero, F. and J.S. Clark (2012) Bayesian inference on age-specific survival for censored and truncated data. Journal of Animal Ecology, 81, 139-149 ([publication](http://onlinelibrary.wiley.com/doi/10.1111/j.1365-2656.2011.01898.x/abstract)).
+
+* Colchero, F., O.R. Jones and M. Rebke (2012) BaSTA: an R package for Bayesian estimation of age-specific survival from incomplete mark-recapture/recovery data with covariates. Methods in Ecology and Evolution. 3: 466-470 ([publication](http://onlinelibrary.wiley.com/doi/10.1111/j.2041-210X.2012.00186.x/abstract))
 
