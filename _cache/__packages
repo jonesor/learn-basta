@@ -1,10 +1,6 @@
 base
 BaSTA
 bookdown
-datasets
-graphics
-grDevices
-methods
 rmarkdown
-stats
-utils
+snow
+snowfall

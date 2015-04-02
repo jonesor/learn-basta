@@ -65,14 +65,14 @@ plot(gsnc)
 
 which produces the trace plots for the mortality parameters. To make sure that the recapture probability has converged, use argument `trace.name = "pi"` as
 
-```{r, fig.height=7,fig.width=4}
+```{r, fig.height=4,fig.width=4}
 plot(gsnc, trace.name = "pi")
 ```
 
-To plot the mortality and survival trajectories, use argument `plot.traces = FALSE`, which produces the following plot:
+To plot the mortality and survival trajectories, use argument `plot.trace = FALSE`, which produces the following plot:
 
 ```{r, fig.height=7,fig.width=4}
-plot(gsnc, plot.traces = FALSE)
+plot(gsnc, plot.trace = FALSE)
 ```
 
 ## Fancy plots {#fancy-plots}
