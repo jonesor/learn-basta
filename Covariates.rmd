@@ -87,6 +87,7 @@ After running the model, you can verify if the inclusion of the sex covariate im
 
 To find out to what extent the parameter estimates between males and females differ, you should look at the *Mean Kulback-Leibler discrepancy calibration (KLDC)* values printed in from the `summary()` function. You can find a detailed explanation of the KLDC values below, but in short for a given parameter the KLDC tell us how much overlap there is between the posterior densities of the female and male estimate of the parameter. For instance, print run a summary of `gssc`, you will see that the KLDCs for $b_0$ and $b_1$ between males and females are close to 1, which implies that there is almost no overlap between the posterior densities. A value close to 0.5 would imply that there is a lot of overlap. 
 
+<!--- Commented out until I figure out how to render the maths.
 ## Details: Comparing parameter densities: Kullback-Leibler discrepancies {#kullback-leibler}
 
 Within BaSTA, the Kullback-Leibler discrepancies (KLD; Kullback and Liebler 1951, McCulloch 1989) provide the user with a measure of how differently (or similarly) each categorical covariate affects survival.  For instance, we may wish to evaluate the differences in survival between males and females with a simple Gompertz model. To illustrate the calculation of KLD, lets take $b_0$, for which the resulting `sub-parameters' would be $\alpha_{f}$ and $\alpha_{m}$ such that, for an individual $i$, we have $b_0 = \alpha_f I_i + \alpha_m (1 - I_i)$, where $I_i$ is an indicator function that assigns 1 if the individual is a female and 0 otherwise. For each of these parameters, BaSTA produces a posterior density, say $P_f = p(\alpha_{f} | \dots)$ and $P_m = p(\alpha_{m} | \dots)$, respectively. The KLD between these densities is calculated as
@@ -104,6 +105,9 @@ where $B(\frac{1}{2})$ is a Bernouilli distribution for an event with probabilit
 $q(k) = \frac{1 + (1 - e^{-2k})^{\frac{1}{2}}}{2}$ .
 
 Thus, $q(k)$ ranges from 0.5 to 1, where a value of 0.5 means that the posterior densities are identical, and 1 that there is no overlap between them.
+
+-->
+
 
 
 ## Changing the structure of the covariates {#covariate-structure}
