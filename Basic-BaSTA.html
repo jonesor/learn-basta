@@ -28,19 +28,18 @@
 <li class="dropdown-header">Basics</li>
 <li><a href="Preparing-data.html">Preparing data</a></li>
 <li><a href="Basic-BaSTA.html">Basic BaSTA</a></li>
+<li><a href="Throwing-shapes.html">The shape argument</a></li>
 <li><a href="Comparing-models.html">Comparing models</a></li>
-
-<li class="dropdown-header">Covariates</li>
-<li><a href="Categorical-covariates.html">Categorical covariates</a></li>
-<li><a href="Continuous-covariates.html">Continuous covariates</a></li>
-<li><a href="Covariate-structure.html">Covariate structure</a></li>
+<li><a href="Covariates.html">Covariates</a></li>
 
 <li class="dropdown-header">Digging deeper</li>
 <li><a href="Negative-senescence.html">Negative senescence</a></li>
 <li><a href="Sex-differences.html">Sex differences</a></li>
 <li><a href="Simulate-datasets.html">Simulate datasets</a></li>
 
-
+<li class="dropdown-header">Literature</li>
+<li><a href="References.html">References</a></li>
+<li><a href="Basta-citations.html">Citations of BaSTA</a></li>
 
             </ul>
           </li>
@@ -57,7 +56,7 @@
         </div>
 
 
-        <h4>Contents</h4>
+        <h4>Page contents</h4>
           <ul class="list-unstyled" id="toc"></ul>
 
           <hr>
@@ -76,7 +75,92 @@
 6. I will then compile the site on my computer and push it to the gh-pages branch (which is where the website lives). You could also do this, but you will need to have Jekyll and pandoc installed.
 -->
 <h2 id="intro">Introduction</h2>
-<p>Content is coming!</p>
+<p>In the previous section you learned how to format the data ready for analysis using <code>basta</code>. In this section we’ll run through how to fit a simple Gompertz model - the default for BaSTA. This model will not have any covariates - we are simply going to estimate the coefficients of the fitted Gompertz model.</p>
+<h2 id="gompertz">Fitting a Gompertz model</h2>
+<p>For this section, let’s load the full dataset without errors… Read in the file <code>fixedData.csv</code>, which we will simply call <code>dat</code>…</p>
+<pre class="sourceCode r"><code class="sourceCode r">dat &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;data/fixedData.csv&quot;</span>, <span class="dt">header =</span> <span class="ot">TRUE</span>)</code></pre>
+<p>Now you have created a BaSTA-ready data set its time to fit a simple model. In fact, if you successfully finished the last session, you will already have fitted a BaSTA model.</p>
+<p>To recap, this is how to do it…</p>
+<pre class="sourceCode r"><code class="sourceCode r">gsnc &lt;-<span class="st"> </span><span class="kw">basta</span>(dat, <span class="dt">studyStart =</span> <span class="dv">1970</span>, <span class="dt">studyEnd =</span> <span class="dv">2000</span>)</code></pre>
+<!--
+Save out this object so I don't have to run BaSTA each time I compile this.
+save(gsnc,file = "data/gsnc.Rdata") 
+-->
+<p>where, for simplicity we have named the BaSTA output object as <code>gsnc</code> which stands for <em>Gompertz, simple, no covariates</em>.</p>
+<p>You will notice that there are only three arguments to this function: the BaSTA data object, and the start and end years of the study. There are of course other arguments to the <code>basta()</code> function (see <code>?basta</code>). The most important ones concern the model structure. The default model, which the above code fits, is a standard Gompertz model with a <code>simple</code> shape. We will discuss the other options in a later section.</p>
+<h2 id="visualising-outputs">Visualising the BaSTA outputs</h2>
+<p>With BaSTA you can extract the outputs from the BaSTA objects in different ways. You can simply type the name of the object and the built-in function <code>print()</code> will recognise the object and produce the following output</p>
+<pre class="sourceCode r"><code class="sourceCode r">gsnc
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Call:</span>
+<span class="co">#&gt; Model                    : GO</span>
+<span class="co">#&gt; Shape                    : simple</span>
+<span class="co">#&gt; Covars. structure        : fused</span>
+<span class="co">#&gt; Minimum age              : 0</span>
+<span class="co">#&gt; Cat. covars.             : </span>
+<span class="co">#&gt; Cont. covars.            :   </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Coefficients:</span>
+<span class="co">#&gt;         Estimate   StdErr Lower95%CI Upper95%CI SerAutocor UpdateRate</span>
+<span class="co">#&gt; b0       -3.2012 0.112380   -3.44961    -2.9915     0.6619     0.2582</span>
+<span class="co">#&gt; b1        0.1115 0.010032    0.09294     0.1318     0.7264     0.2414</span>
+<span class="co">#&gt; pi.1970   0.5015 0.008287    0.48615     0.5186     0.1056     1.0000</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Convergence calculations require more than one run. </span>
+<span class="co">#&gt; To estimate potential scale reduction run at least two simulations.</span></code></pre>
+<p>To get more information, simply use function <code>summary()</code> like this:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(gsnc)
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Output from BaSTA version 1.9.4</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Call:</span>
+<span class="co">#&gt; Model                    : GO</span>
+<span class="co">#&gt; Shape                    : simple</span>
+<span class="co">#&gt; Covars. structure        : fused</span>
+<span class="co">#&gt; Minimum age              : 0</span>
+<span class="co">#&gt; Cat. covars.             : </span>
+<span class="co">#&gt; Cont. covars.            :   </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Model settings:</span>
+<span class="co">#&gt;    niter   burnin thinning     nsim </span>
+<span class="co">#&gt;    11000     1001       20        1 </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Jumps and priors:</span>
+<span class="co">#&gt;    Jump.sds Prior.means Prior.sds</span>
+<span class="co">#&gt; b0   0.1806       -3.00         1</span>
+<span class="co">#&gt; b1   0.0152        0.01         1</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Mean Kullback-Leibler</span>
+<span class="co">#&gt; discrepancy calibration (KLDC):</span>
+<span class="co">#&gt; KLDC was not calculated due to insufficient number</span>
+<span class="co">#&gt;   of simulations to estimate convergence.</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Coefficients:</span>
+<span class="co">#&gt;         Estimate   StdErr Lower95%CI Upper95%CI SerAutocor UpdateRate</span>
+<span class="co">#&gt; b0       -3.2012 0.112380   -3.44961    -2.9915     0.6619     0.2582</span>
+<span class="co">#&gt; b1        0.1115 0.010032    0.09294     0.1318     0.7264     0.2414</span>
+<span class="co">#&gt; pi.1970   0.5015 0.008287    0.48615     0.5186     0.1056     1.0000</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Convergence:</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Convergence calculations require more than one run. </span>
+<span class="co">#&gt; To estimate potential scale reduction run at least two simulations.</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; DIC:</span>
+<span class="co">#&gt; DIC was not calculated due to insufficient number of simulations to estimate convergence.</span></code></pre>
+<p>In addition, the BaSTA object is recognised by function <code>plot()</code>, allowing you to plot different aspects of the outputs. For instance, to visually determine if the MCMC parameter chains or “traces” have converged, simply type:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(gsnc)</code></pre>
+<p><img src="figures/unnamed-chunk-7.png" title="plot of chunk unnamed-chunk-7" alt="plot of chunk unnamed-chunk-7" width="384" /></p>
+<p>which produces the trace plots for the mortality parameters. To make sure that the recapture probability has converged, use argument <code>trace.name = &quot;pi&quot;</code> as</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(gsnc, <span class="dt">trace.name =</span> <span class="st">&quot;pi&quot;</span>)</code></pre>
+<p><img src="figures/unnamed-chunk-8.png" title="plot of chunk unnamed-chunk-8" alt="plot of chunk unnamed-chunk-8" width="384" /></p>
+<p>To plot the mortality and survival trajectories, use argument <code>plot.trace = FALSE</code>, which produces the following plot:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(gsnc, <span class="dt">plot.trace =</span> <span class="ot">FALSE</span>)</code></pre>
+<p><img src="figures/unnamed-chunk-9.png" title="plot of chunk unnamed-chunk-9" alt="plot of chunk unnamed-chunk-9" width="384" /></p>
+<h2 id="fancy-plots">Fancy plots</h2>
+<p>Finally, you can produce what we call a “fancy plot” that combines the densities of the mortality parameters and the trajectories of mortality and survival into the same plot as</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(gsnc, <span class="dt">fancy =</span> <span class="ot">TRUE</span>)</code></pre>
+<p><img src="figures/unnamed-chunk-10.png" title="plot of chunk unnamed-chunk-10" alt="plot of chunk unnamed-chunk-10" width="384" /></p>
 
         </div>
       </div>

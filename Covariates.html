@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Covariates &middot; Learn BaSTA.</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="www/bootstrap.min.css" rel="stylesheet">
+    <link href="www/highlight.css" rel="stylesheet">
+
+    <link href='http://fonts.googleapis.com/css?family=Inconsolata:400,700'
+      rel='stylesheet' type='text/css'>
+  </head>
+
+  <body>
+
+    <div class="container">
+
+      <div class="masthead">
+        <ul class="nav nav-pills pull-right">
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              Table of contents<b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu pull-right" role="menu">
+              <li><a href="Introduction.html">Introduction</a></li>
+
+<li class="dropdown-header">Basics</li>
+<li><a href="Preparing-data.html">Preparing data</a></li>
+<li><a href="Basic-BaSTA.html">Basic BaSTA</a></li>
+<li><a href="Throwing-shapes.html">The shape argument</a></li>
+<li><a href="Comparing-models.html">Comparing models</a></li>
+<li><a href="Covariates.html">Covariates</a></li>
+
+<li class="dropdown-header">Digging deeper</li>
+<li><a href="Negative-senescence.html">Negative senescence</a></li>
+<li><a href="Sex-differences.html">Sex differences</a></li>
+<li><a href="Simulate-datasets.html">Simulate datasets</a></li>
+
+<li class="dropdown-header">Literature</li>
+<li><a href="References.html">References</a></li>
+<li><a href="Basta-citations.html">Citations of BaSTA</a></li>
+
+            </ul>
+          </li>
+        </ul>
+
+        <h3 class="muted"><a href="/learn-basta/">Learn BaSTA in R</a> <small>by Owen Jones, Maren Rebke and Fernando Colchero</small></h3>
+        <hr>
+      </div>
+
+      <div class="row">
+        <div class="col-xs-12 col-sm-3" id="nav">
+        <div class="well">
+          We occasionally run workshops on BaSTA. The next one will (probably) be at the British Ecological Society meeting in Edinburgh, Dec. 2015.
+        </div>
+
+
+        <h4>Page contents</h4>
+          <ul class="list-unstyled" id="toc"></ul>
+
+          <hr>
+          <p><a href="/learn-basta/gotbugs.html">Report bugs.</a></p>
+
+
+        </div>
+
+    <div id="content" class="col-xs-12 col-sm-8 pull-right">
+          <!---
+1. Use standard R Markdown.
+2. Headings with "##" will be automatically turned into table of contents. Therefore, for longer tutorials please use this facility.
+3. Check that R studio will knit into an HTML document.
+4. You can contribute the .rmd file via GitHub (https://github.com/jonesor/learn-basta), **to the master branch ONLY**. To do that you must be a collaborator on the repository (contact me with your username), or you can fork the repository and send a pull request (https://help.github.com/articles/using-pull-requests/).
+5. Alternatively you can email me the *rmd file and associated files (e.g. any figures/diagrams.)
+6. I will then compile the site on my computer and push it to the gh-pages branch (which is where the website lives). You could also do this, but you will need to have Jekyll and pandoc installed.
+-->
+<h2 id="intro">Introduction</h2>
+<p>In most cases reesarchers will want to go beyond simply estimating functional forms of mortality and comparing their model fits. They will want to study the effects of individual covariates on the mortality trajectories. BaSTA can currently handle <em>only</em> covariates that do not vary through time. For example, one could fit a model with sex (for most species), but not body mass, since this varies through time. Nevertheless, BaSTA allows fitting of both continuous and categorical covariates in various ways and is a powerful tool for investigating a range of questions.</p>
+<h2>Formatting covariate data.</h2>
+<p>Before proceeding further, it is first necessary to introduce the format required for covariates. Briefly, the covariates must be included in the basta input data as a series of columns (with each row representing an individual) appended after the recapture matrix. It is very important that the order of individuals in both parts of the data are the same for obvious reasons! BaSTA includes a handy function for doing this, <code>MakeCovMat()</code>.</p>
+<p>In the following example we will include covariate information to the BaSTA input table. To do this, let’s read in the table <code>covData.csv</code></p>
+<pre class="sourceCode r"><code class="sourceCode r">covdat &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;data/covData.csv&quot;</span>, <span class="dt">header =</span> <span class="ot">TRUE</span>)</code></pre>
+<p>which should look like</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(covdat)
+<span class="co">#&gt;   ID Sex IndivMeasure</span>
+<span class="co">#&gt; 1  1   m      -0.2278</span>
+<span class="co">#&gt; 2  3   m      -0.5347</span>
+<span class="co">#&gt; 3  9   m       0.2889</span>
+<span class="co">#&gt; 4 10   f       0.1523</span>
+<span class="co">#&gt; 5 11   f       0.9765</span>
+<span class="co">#&gt; 6 12   m       0.4826</span></code></pre>
+<p>Here, the data frame <code>covdat</code> contains one line per individual with sex information and with a continuous individual level covariate. We will focus on the sex covariate first. To construct a matrix of covariates that BaSTA can handle, it is enough to use the BaSTA function <code>MakeCovMat()</code></p>
+<pre class="sourceCode r"><code class="sourceCode r">covars &lt;-<span class="st"> </span><span class="kw">MakeCovMat</span>(<span class="st">&quot;~ Sex - 1&quot;</span>, <span class="dt">data =</span> covdat)</code></pre>
+<p>Alternatively, we could have specified the name or number of the column(s) of the covariate(s) we wanted to include as</p>
+<pre class="sourceCode r"><code class="sourceCode r">covars &lt;-<span class="st"> </span><span class="kw">MakeCovMat</span>(<span class="st">&quot;Sex&quot;</span>, <span class="dt">data =</span> covdat)</code></pre>
+<p>The advantage of using R formulas is that they simplify incorporating interactions between covariates. The resulting matrix should look like this</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(covars)
+<span class="co">#&gt;   ID Sexf Sexm</span>
+<span class="co">#&gt; 1  1    0    1</span>
+<span class="co">#&gt; 2  3    0    1</span>
+<span class="co">#&gt; 3  9    0    1</span>
+<span class="co">#&gt; 4 10    1    0</span>
+<span class="co">#&gt; 5 11    1    0</span>
+<span class="co">#&gt; 6 12    0    1</span></code></pre>
+<p>Now we only need to collate the <code>dat</code> matrix that includes the capture-history information with the <code>covars</code> matrix</p>
+<pre class="sourceCode r"><code class="sourceCode r">datCovs &lt;-<span class="st"> </span><span class="kw">data.frame</span>(dat, covars[, -<span class="dv">1</span>])</code></pre>
+<h2 id="catagorical">BaSTA analysis with categorical covariates</h2>
+<p>Now, to run the analysis, we simply use function <code>basta()</code> as we did before. Thus, to run a Gompertz model and save the output in an object <code>gssc</code> you can type</p>
+<pre class="sourceCode r"><code class="sourceCode r">gssc &lt;-<span class="st"> </span><span class="kw">basta</span>(datCovs, <span class="dt">studyStart =</span> <span class="dv">1970</span>, <span class="dt">studyEnd =</span> <span class="dv">2000</span>, <span class="dt">model =</span> <span class="st">&quot;LO&quot;</span>,
+              <span class="dt">nsim =</span> <span class="dv">2</span>, <span class="dt">ncpus =</span> <span class="dv">2</span>, <span class="dt">parallel =</span> <span class="ot">TRUE</span>)</code></pre>
+<!--
+Save out this object so I don't have to run BaSTA each time I compile this.
+save(gssc,file = "data/gssc.Rdata") 
+-->
+<p>which produces the following summary</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(gssc)
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Output from BaSTA version 1.9.4</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Call:</span>
+<span class="co">#&gt; Model                    : LO</span>
+<span class="co">#&gt; Shape                    : simple</span>
+<span class="co">#&gt; Covars. structure        : fused</span>
+<span class="co">#&gt; Minimum age              : 0</span>
+<span class="co">#&gt; Cat. covars.             : Sexf, Sexm</span>
+<span class="co">#&gt; Cont. covars.            :   </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Model settings:</span>
+<span class="co">#&gt;    niter   burnin thinning     nsim </span>
+<span class="co">#&gt;    11000     1001       20        2 </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Jumps and priors:</span>
+<span class="co">#&gt;         Jump.sds Prior.means Prior.sds</span>
+<span class="co">#&gt; b0.Sexf  0.32147      -3e+00         1</span>
+<span class="co">#&gt; b0.Sexm  0.48692      -3e+00         1</span>
+<span class="co">#&gt; b1.Sexf  0.02391       1e-02         1</span>
+<span class="co">#&gt; b1.Sexm  0.07422       1e-02         1</span>
+<span class="co">#&gt; b2.Sexf  0.29448       1e-10         1</span>
+<span class="co">#&gt; b2.Sexm  0.46422       1e-10         1</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Mean Kullback-Leibler</span>
+<span class="co">#&gt; discrepancy calibration (KLDC):</span>
+<span class="co">#&gt;                 b0     b1    b2</span>
+<span class="co">#&gt; Sexm - Sexf 0.9163 0.9995 0.988</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Coefficients:</span>
+<span class="co">#&gt;         Estimate   StdErr Lower95%CI Upper95%CI SerAutocor UpdateRate</span>
+<span class="co">#&gt; b0.Sexf  -4.5481 0.251849   -5.04947    -4.1072     0.7889     0.2551</span>
+<span class="co">#&gt; b0.Sexm  -3.9917 0.348608   -4.78912    -3.3925     0.7831     0.2516</span>
+<span class="co">#&gt; b1.Sexf   0.2017 0.027708    0.15670     0.2653     0.8813     0.2417</span>
+<span class="co">#&gt; b1.Sexm   0.5051 0.090832    0.34579     0.6958     0.8616     0.2642</span>
+<span class="co">#&gt; b2.Sexf   0.2530 0.179238    0.01355     0.6603     0.7918     0.2573</span>
+<span class="co">#&gt; b2.Sexm   1.0797 0.355270    0.45627     1.7828     0.8071     0.2493</span>
+<span class="co">#&gt; pi.1970   0.4998 0.008361    0.48302     0.5152     0.1678     1.0000</span>
+<span class="co">#&gt;         PotScaleReduc</span>
+<span class="co">#&gt; b0.Sexf        0.9992</span>
+<span class="co">#&gt; b0.Sexm        0.9992</span>
+<span class="co">#&gt; b1.Sexf        1.0007</span>
+<span class="co">#&gt; b1.Sexm        0.9990</span>
+<span class="co">#&gt; b2.Sexf        1.0060</span>
+<span class="co">#&gt; b2.Sexm        0.9995</span>
+<span class="co">#&gt; pi.1970        1.0046</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Convergence:</span>
+<span class="co">#&gt; Appropriate convergence reached for all parameters.</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; DIC:</span>
+<span class="co">#&gt; 6982</span></code></pre>
+<p>Let’s have a look at the survival and mortality trajectories:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(gssc, <span class="dt">fancy =</span> <span class="ot">TRUE</span>)</code></pre>
+<p><img src="figures/unnamed-chunk-11.png" title="plot of chunk unnamed-chunk-11" alt="plot of chunk unnamed-chunk-11" width="480" /></p>
+<p>After running the model, you can verify if the inclusion of the sex covariate improved the fit by comparing the DICs between the <code>multiout</code> object and <code>gssc</code>. Now you can try to run the model for the Weibull and logistic models either individually (create objects called <code>wssc</code> and <code>lssc</code>) or in one go using <code>multibasta()</code> to create a multi-BaSTA object called <code>multisc</code>).</p>
+<h2 id="compare-parameter-estimates">Comparing parameter estimates for categorical covariates</h2>
+<p>To find out to what extent the parameter estimates between males and females differ, you should look at the <em>Mean Kulback-Leibler discrepancy calibration (KLDC)</em> values printed in from the <code>summary()</code> function. You can find a detailed explanation of the KLDC values below, but in short for a given parameter the KLDC tell us how much overlap there is between the posterior densities of the female and male estimate of the parameter. For instance, print run a summary of <code>gssc</code>, you will see that the KLDCs for <span class="math"><em>b</em><sub>0</sub></span> and <span class="math"><em>b</em><sub>1</sub></span> between males and females are close to 1, which implies that there is almost no overlap between the posterior densities. A value close to 0.5 would imply that there is a lot of overlap.</p>
+<!--- Commented out until I figure out how to render the maths.
+## Details: Comparing parameter densities: Kullback-Leibler discrepancies {#kullback-leibler}
+
+Within BaSTA, the Kullback-Leibler discrepancies (KLD; Kullback and Liebler 1951, McCulloch 1989) provide the user with a measure of how differently (or similarly) each categorical covariate affects survival.  For instance, we may wish to evaluate the differences in survival between males and females with a simple Gompertz model. To illustrate the calculation of KLD, lets take $b_0$, for which the resulting `sub-parameters' would be $\alpha_{f}$ and $\alpha_{m}$ such that, for an individual $i$, we have $b_0 = \alpha_f I_i + \alpha_m (1 - I_i)$, where $I_i$ is an indicator function that assigns 1 if the individual is a female and 0 otherwise. For each of these parameters, BaSTA produces a posterior density, say $P_f = p(\alpha_{f} | \dots)$ and $P_m = p(\alpha_{m} | \dots)$, respectively. The KLD between these densities is calculated as
+
+$K(P_f, P_m) = \int_{0}^{\infty} P_f \log\left(\frac{P_f}{P_m}\right) d\alpha$. 
+
+The result can be interpreted as how far off we would be if we tried to predict $\alpha_m$ from the posterior density of $\alpha_f$. If both densities are identical, then $K(P_f, P_m) = 0$, which suggests that there is no distinction between males and females for $b_0$. As the KLD values increase the discrepancy becomes larger. As you can inferred from the equation above, the relationship is asymmetric, namely $K(P_f, P_m) \neq K(P_m, P_f)$. 
+
+To make KLD easier to interpret, McCulloch (1989) proposed a simple calibration of the KLD values that reduces the asymmetry. This is as follows: Let $k = K(P_f, P_m)$ and $q(k)$ be a calibration function such that 
+
+$k & = & K(P_f,P_m) &=&  K\left\{B\left(\frac{1}{2}\right), B[q(k)]\right\}$,
+
+where $B(\frac{1}{2})$ is a Bernouilli distribution for an event with probability $1/2$ (i.e. same probability of success and failure). This calibration is then calculated as
+
+$q(k) = \frac{1 + (1 - e^{-2k})^{\frac{1}{2}}}{2}$ .
+
+Thus, $q(k)$ ranges from 0.5 to 1, where a value of 0.5 means that the posterior densities are identical, and 1 that there is no overlap between them.
+
+-->
+<h2 id="covariate-structure">Changing the structure of the covariates</h2>
+<p>As you might have notticed, BaSTA by default assigns any categorical covariate as a function of the mortality parameters. We can change this in case we believe that these covariates only affect mortality proportionally, using a proportional hazards model. This is simply done with argument <code>covarsStruct = &quot;prop.haz&quot;</code>:</p>
+<pre class="sourceCode r"><code class="sourceCode r">gsscph &lt;-<span class="st"> </span><span class="kw">basta</span>(datCovs, <span class="dt">studyStart =</span> <span class="dv">1970</span>, <span class="dt">studyEnd =</span> <span class="dv">2000</span>, <span class="dt">model =</span> <span class="st">&quot;LO&quot;</span>,
+              <span class="dt">covarsStruct =</span> <span class="st">&quot;prop.haz&quot;</span>, <span class="dt">nsim =</span> <span class="dv">2</span>, <span class="dt">ncpus =</span> <span class="dv">2</span>, 
+              <span class="dt">parallel =</span> <span class="ot">TRUE</span>)</code></pre>
+<!--
+Save out this object so I don't have to run BaSTA each time I compile this.
+save(gsscph,file = "data/gsscph.Rdata") 
+-->
+<p>We can examine the DIC of the two models to see if using proportional hazards improves the fit.</p>
+<pre class="sourceCode r"><code class="sourceCode r">gsscph$DIC
+<span class="co">#&gt;  D.ave D.mode     pD      k    DIC </span>
+<span class="co">#&gt;   5061   2797   2264      5   7325</span>
+gssc$DIC
+<span class="co">#&gt;  D.ave D.mode     pD      k    DIC </span>
+<span class="co">#&gt;   5033   3084   1949      7   6982</span></code></pre>
+<p>It seems not, so we would favour the model with <code>fused</code> covariate structure.</p>
+<h2 id="continuous-covariates">Adding continuous covariates</h2>
+<p>Finally, we will run the model adding a continuous covariate. To do this, let’s run function <code>MakeCovMat()</code> and add the new covariate to the formula</p>
+<pre class="sourceCode r"><code class="sourceCode r">covars &lt;-<span class="st"> </span><span class="kw">MakeCovMat</span>(<span class="st">&quot;~ Sex + IndivMeasure - 1&quot;</span>, <span class="dt">data =</span> covdat)</code></pre>
+<p>Now join the tables:</p>
+<pre class="sourceCode r"><code class="sourceCode r">datCovs &lt;-<span class="st"> </span><span class="kw">data.frame</span>(dat, covars[, -<span class="dv">1</span>])</code></pre>
+<p>and run the analysis. Let’s call the new object  for “<em>Gompertz, simple, both covariates</em>:</p>
+<pre class="sourceCode r"><code class="sourceCode r">gsbc &lt;-<span class="st"> </span><span class="kw">basta</span>(datCovs, <span class="dt">studyStart =</span> <span class="dv">1970</span>, <span class="dt">studyEnd =</span> <span class="dv">2000</span>, <span class="dt">model =</span> <span class="st">&quot;LO&quot;</span>,
+              <span class="dt">nsim =</span> <span class="dv">2</span>, <span class="dt">ncpus =</span> <span class="dv">2</span>, <span class="dt">parallel =</span> <span class="ot">TRUE</span>)</code></pre>
+<!--
+Save out this object so I don't have to run BaSTA each time I compile this.
+save(gsbc,file = "data/gsbc.Rdata") 
+-->
+<p>Now you can try to evaluate which model performs best. What if you test different functional forms with arguments <code>model</code> and <code>shape</code> (you can do this with <code>mulitbasta()</code>).</p>
+
+        </div>
+      </div>
+
+      <div class="footer">
+        <hr>
+        <p>Based on Hadley Wickham's Advanced R Programming site. Powered by <a href="http://jekyllrb.com/">jekyll</a>,
+          <a href="http://yihui.name/knitr/">knitr</a>, and
+          <a href="http://johnmacfarlane.net/pandoc/">pandoc</a>. Source
+          available on <a href="https://github.com/jonesor/learn-basta/">github</a>.
+        </p>
+      </div>
+
+    </div> <!-- /container -->
+
+  <script src="//code.jquery.com/jquery.js"></script>
+  <script src="www/bootstrap.min.js"></script>
+  <script src="www/toc.js"></script>
+
+  </body>
+</html>

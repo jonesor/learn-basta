@@ -28,19 +28,18 @@
 <li class="dropdown-header">Basics</li>
 <li><a href="Preparing-data.html">Preparing data</a></li>
 <li><a href="Basic-BaSTA.html">Basic BaSTA</a></li>
+<li><a href="Throwing-shapes.html">The shape argument</a></li>
 <li><a href="Comparing-models.html">Comparing models</a></li>
-
-<li class="dropdown-header">Covariates</li>
-<li><a href="Categorical-covariates.html">Categorical covariates</a></li>
-<li><a href="Continuous-covariates.html">Continuous covariates</a></li>
-<li><a href="Covariate-structure.html">Covariate structure</a></li>
+<li><a href="Covariates.html">Covariates</a></li>
 
 <li class="dropdown-header">Digging deeper</li>
 <li><a href="Negative-senescence.html">Negative senescence</a></li>
 <li><a href="Sex-differences.html">Sex differences</a></li>
 <li><a href="Simulate-datasets.html">Simulate datasets</a></li>
 
-
+<li class="dropdown-header">Literature</li>
+<li><a href="References.html">References</a></li>
+<li><a href="Basta-citations.html">Citations of BaSTA</a></li>
 
             </ul>
           </li>
@@ -57,7 +56,7 @@
         </div>
 
 
-        <h4>Contents</h4>
+        <h4>Page contents</h4>
           <ul class="list-unstyled" id="toc"></ul>
 
           <hr>
@@ -76,7 +75,139 @@
 6. I will then compile the site on my computer and push it to the gh-pages branch (which is where the website lives). You could also do this, but you will need to have Jekyll and pandoc installed.
 -->
 <h2 id="intro">Introduction</h2>
-<p>Content is coming!</p>
+<p>Before using Bayesian Survival Trajectory Analysis (BaSTA) you will need to ensure that your data are in the format that the <code>basta</code> package expects. The required format is pretty simple. BaSTA requires a data frame where each row represents an individual and with each column giving information about that individual and its capture or observation history. The following gives further details and outlines the use of the functions <code>CensusToCaptHist()</code>, and <code>merge()</code> to create a simple data frame.</p>
+<h2 id="formatting">Formatting data for analysis</h2>
+<p>The data must be arranged in a data frame where each row corresponds to a single individual. The first column corresponds to the individual unique IDs and the second and third columns give the years of birth and death (if known) respectively.</p>
+<p>Next, there should be a number of columns corresponding to the study span where the capture or observation histories are recorded. For example, if the study spans 10-years, and you are working on a year-by-year basis, there should be 10 columns (one for each year). Thus, if an individual is observed in a year, this is recorded with a <code>1</code>, and if the individual is unobserved, this is recorded with a <code>0</code>. Note that the years of birth and death are not coded as detection (they should recieve a <code>0</code>). [Timescales vary depending on the organism: replace “years” with “months”,“weeks”, “days”, etc. as appropriate in the above description!]</p>
+<p>Finally, if covariates are to be included in the analysis, additional columns can be added on the right-hand side. The format required for these columns depends on whether the covariates are categorical or continuous - we’ll get to that in a moment.</p>
+<p>BaSTA incudes some helper functions to get the data into the correct format.</p>
+<p>Capture histories are often recorded as what we term survey or census tables. Typically, these tables have one row for each time an individual is observed, and include one column for individual IDs and one column for detection date. Often, these tables are stored in a spreadsheet software (e.g. <code>MS Excel</code>). We recommend that users save it either in tab delimited text (<code>.txt</code>) or comma separated value (<code>.csv</code>) formats so they can be easily read into R. Below is the code to read a table that was previously saved in <code>Excel</code> as tab delimited text:</p>
+<pre class="sourceCode r"><code class="sourceCode r">survey &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;data/survey1.csv&quot;</span>, <span class="dt">header =</span> <span class="ot">TRUE</span>)
+<span class="kw">head</span>(survey)
+<span class="co">#&gt;   Year ID</span>
+<span class="co">#&gt; 1 1990  1</span>
+<span class="co">#&gt; 2 1991  2</span>
+<span class="co">#&gt; 3 1991  3</span>
+<span class="co">#&gt; 4 1992  1</span>
+<span class="co">#&gt; 5 1992  2</span>
+<span class="co">#&gt; 6 1992  3</span></code></pre>
+<p>One can then use the <code>CensusToCaptHist()</code> function to construct the recapture matrix required by BaSTA.</p>
+<p>The ID argument in the <code>CensusToCaptHist()</code> function, takes a vector with the individual IDs, in this case the second column in “survey”, along with the d argument, which is a vector of dates on which each individual was detected (i.e. the first column in ``survey’’), and argument dformat which is (optionally) used to specify the date format used in d. In case the d argument is a character string based on a date format, or of class date, the minimun time interval can be specified with argument timeInt, which takes a single character value, with the folowing options:</p>
+<p><code>Y</code> for years (default); <code>M</code> for months; <code>W</code> for weeks; and <code>D</code> for days. The resulting capture history matrix (<code>Y</code>) looks like this:</p>
+<pre class="sourceCode r"><code class="sourceCode r">Y &lt;-<span class="st"> </span><span class="kw">CensusToCaptHist</span>(<span class="dt">ID =</span> survey[, <span class="dv">2</span>], <span class="dt">d =</span> survey[, <span class="dv">1</span>])
+<span class="kw">head</span>(Y)
+<span class="co">#&gt;   ID 1990 1991 1992 1993 1994 1995</span>
+<span class="co">#&gt; 1  1    1    0    1    1    0    0</span>
+<span class="co">#&gt; 2  2    0    1    1    0    1    0</span>
+<span class="co">#&gt; 3  3    0    1    1    1    0    0</span>
+<span class="co">#&gt; 4  4    0    0    1    0    0    1</span>
+<span class="co">#&gt; 5  5    0    0    0    1    0    1</span></code></pre>
+<p>Please try this with the dataset “<code>surveyData.csv</code>”. Read in the data, take a look at it using <code>{head()</code>, an use the function <code>CensusToCaptHist()</code> to build a capture history.</p>
+<p>Your code will look something like this:</p>
+<pre class="sourceCode r"><code class="sourceCode r">survey &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;data/surveyData.csv&quot;</span>, <span class="dt">header =</span> <span class="ot">TRUE</span>)
+Y &lt;-<span class="st"> </span><span class="kw">CensusToCaptHist</span>(<span class="dt">ID =</span> survey$ID, <span class="dt">d =</span> survey$Year)</code></pre>
+<p>Now get the birth and death information for the population.</p>
+<pre class="sourceCode r"><code class="sourceCode r">birthDeath &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;data/birthsAndDeaths.csv&quot;</span>, <span class="dt">header =</span> <span class="ot">TRUE</span>)
+<span class="kw">head</span>(birthDeath)
+<span class="co">#&gt;    ID BirthYear DeathYear</span>
+<span class="co">#&gt; 1  38      1981      1988</span>
+<span class="co">#&gt; 2 182      1998      2006</span>
+<span class="co">#&gt; 3 235      1976      1993</span>
+<span class="co">#&gt; 4 266      1973      1984</span>
+<span class="co">#&gt; 5 272      1978      1985</span>
+<span class="co">#&gt; 6 304      1970      1976</span></code></pre>
+<p>Merge the two datasets together. We need to specify that we should include ALL records for all individuals using the <code>all = TRUE</code> argument. This is because there are many individuals where we do not know their birth and/or death dates. Notice how these individuals will now have <code>NA</code> values for their birth/death years.</p>
+<pre class="sourceCode r"><code class="sourceCode r">myData &lt;-<span class="st"> </span><span class="kw">merge</span>(birthDeath, Y, <span class="dt">by =</span> <span class="st">&quot;ID&quot;</span>, <span class="dt">all =</span> <span class="ot">TRUE</span>)
+<span class="kw">head</span>(myData)
+<span class="co">#&gt;   ID BirthYear DeathYear 1970 1971 1972 1973 1974 1975 1976 1977 1978 1979</span>
+<span class="co">#&gt; 1  1        NA        NA    0    0    0    0    1    0    1    1    0    1</span>
+<span class="co">#&gt; 2  2        NA        NA    0    0    0    0    0    0    0    0    0    0</span>
+<span class="co">#&gt; 3  3        NA        NA    0    0    0    0    0    0    0    0    0    0</span>
+<span class="co">#&gt; 4  4        NA        NA    1    1    0    0    0    0    0    0    0    0</span>
+<span class="co">#&gt; 5  5        NA        NA    0    0    0    0    1    0    1    0    0    0</span>
+<span class="co">#&gt; 6  6        NA        NA    0    1    0    0    1    0    0    1    0    0</span>
+<span class="co">#&gt;   1980 1981 1982 1983 1984 1985 1986 1987 1988 1989 1990 1991 1992 1993</span>
+<span class="co">#&gt; 1    0    0    0    0    0    0    0    0    0    0    0    0    0    0</span>
+<span class="co">#&gt; 2    0    0    0    0    0    0    0    0    0    0    0    1    1    0</span>
+<span class="co">#&gt; 3    0    0    0    0    0    0    0    0    1    1    1    0    0    0</span>
+<span class="co">#&gt; 4    0    0    0    0    0    0    0    0    0    0    0    0    0    0</span>
+<span class="co">#&gt; 5    0    0    0    0    0    0    0    0    0    0    0    0    0    0</span>
+<span class="co">#&gt; 6    0    0    0    0    0    0    0    0    0    0    0    0    0    0</span>
+<span class="co">#&gt;   1994 1995 1996 1997 1998 1999 2000</span>
+<span class="co">#&gt; 1    0    0    0    0    0    0    0</span>
+<span class="co">#&gt; 2    1    1    1    0    0    0    0</span>
+<span class="co">#&gt; 3    0    0    0    0    0    0    0</span>
+<span class="co">#&gt; 4    0    0    0    0    0    0    0</span>
+<span class="co">#&gt; 5    0    0    0    0    0    0    0</span>
+<span class="co">#&gt; 6    0    0    0    0    0    0    0</span></code></pre>
+<p>You now need to replace the <code>NA</code> values with <code>0</code>.</p>
+<pre class="sourceCode r"><code class="sourceCode r">myData[<span class="kw">is.na</span>(myData)] &lt;-<span class="st"> </span><span class="dv">0</span>
+<span class="kw">head</span>(myData)
+<span class="co">#&gt;   ID BirthYear DeathYear 1970 1971 1972 1973 1974 1975 1976 1977 1978 1979</span>
+<span class="co">#&gt; 1  1         0         0    0    0    0    0    1    0    1    1    0    1</span>
+<span class="co">#&gt; 2  2         0         0    0    0    0    0    0    0    0    0    0    0</span>
+<span class="co">#&gt; 3  3         0         0    0    0    0    0    0    0    0    0    0    0</span>
+<span class="co">#&gt; 4  4         0         0    1    1    0    0    0    0    0    0    0    0</span>
+<span class="co">#&gt; 5  5         0         0    0    0    0    0    1    0    1    0    0    0</span>
+<span class="co">#&gt; 6  6         0         0    0    1    0    0    1    0    0    1    0    0</span>
+<span class="co">#&gt;   1980 1981 1982 1983 1984 1985 1986 1987 1988 1989 1990 1991 1992 1993</span>
+<span class="co">#&gt; 1    0    0    0    0    0    0    0    0    0    0    0    0    0    0</span>
+<span class="co">#&gt; 2    0    0    0    0    0    0    0    0    0    0    0    1    1    0</span>
+<span class="co">#&gt; 3    0    0    0    0    0    0    0    0    1    1    1    0    0    0</span>
+<span class="co">#&gt; 4    0    0    0    0    0    0    0    0    0    0    0    0    0    0</span>
+<span class="co">#&gt; 5    0    0    0    0    0    0    0    0    0    0    0    0    0    0</span>
+<span class="co">#&gt; 6    0    0    0    0    0    0    0    0    0    0    0    0    0    0</span>
+<span class="co">#&gt;   1994 1995 1996 1997 1998 1999 2000</span>
+<span class="co">#&gt; 1    0    0    0    0    0    0    0</span>
+<span class="co">#&gt; 2    1    1    1    0    0    0    0</span>
+<span class="co">#&gt; 3    0    0    0    0    0    0    0</span>
+<span class="co">#&gt; 4    0    0    0    0    0    0    0</span>
+<span class="co">#&gt; 5    0    0    0    0    0    0    0</span>
+<span class="co">#&gt; 6    0    0    0    0    0    0    0</span>
+<span class="kw">tail</span>(myData)
+<span class="co">#&gt;      ID BirthYear DeathYear 1970 1971 1972 1973 1974 1975 1976 1977 1978</span>
+<span class="co">#&gt; 629 629         0         0    0    0    0    0    0    0    0    0    0</span>
+<span class="co">#&gt; 630 717      1972      1973    0    0    0    0    0    0    0    0    0</span>
+<span class="co">#&gt; 631 736      1996      2004    0    0    0    0    0    0    0    0    0</span>
+<span class="co">#&gt; 632 757      1959      1976    0    0    0    0    0    0    0    0    0</span>
+<span class="co">#&gt; 633 801      1995      2006    0    0    0    0    0    0    0    0    0</span>
+<span class="co">#&gt; 634 828      1974      1974    0    0    0    0    0    0    0    0    0</span>
+<span class="co">#&gt;     1979 1980 1981 1982 1983 1984 1985 1986 1987 1988 1989 1990 1991 1992</span>
+<span class="co">#&gt; 629    0    0    0    0    0    0    1    1    1    1    1    0    1    0</span>
+<span class="co">#&gt; 630    0    0    0    0    0    0    0    0    0    0    0    0    0    0</span>
+<span class="co">#&gt; 631    0    0    0    0    0    0    0    0    0    0    0    0    0    0</span>
+<span class="co">#&gt; 632    0    0    0    0    0    0    0    0    0    0    0    0    0    0</span>
+<span class="co">#&gt; 633    0    0    0    0    0    0    0    0    0    0    0    0    0    0</span>
+<span class="co">#&gt; 634    0    0    0    0    0    0    0    0    0    0    0    0    0    0</span>
+<span class="co">#&gt;     1993 1994 1995 1996 1997 1998 1999 2000</span>
+<span class="co">#&gt; 629    0    0    0    0    0    0    0    0</span>
+<span class="co">#&gt; 630    0    0    0    0    0    0    0    0</span>
+<span class="co">#&gt; 631    0    0    0    0    0    0    0    0</span>
+<span class="co">#&gt; 632    0    0    0    0    0    0    0    0</span>
+<span class="co">#&gt; 633    0    0    0    0    0    0    0    0</span>
+<span class="co">#&gt; 634    0    0    0    0    0    0    0    0</span></code></pre>
+<h2 id="check-integrity">Checking the integrity of the data</h2>
+<p>The data set looks OK, but we can check it using the <code>DataCheck()</code> function. This function creates a new R list object that includes an indication of whether there were problems with the data, and what those problems were.</p>
+<pre class="sourceCode r"><code class="sourceCode r">checkedData &lt;-<span class="st"> </span><span class="kw">DataCheck</span>(myData, <span class="dv">1970</span>, <span class="dv">2000</span>)
+<span class="co">#&gt; The following rows have observations that occur after the year of death:</span>
+<span class="co">#&gt; [1]  38 266 272 304 318 401 509 576</span>
+<span class="co">#&gt; The following rows have observations that occur before the year of birth:</span>
+<span class="co">#&gt; [1] 182 556</span>
+<span class="co">#&gt; The following rows have a one in the recapture matrix in the birth year:</span>
+<span class="co">#&gt; [1] 182</span></code></pre>
+<p>The data have a couple of problems: there are individuals that have observations <em>after</em> the year of death, there are observations that occur <em>before</em> birth, and there is an individual with a <code>1</code> recorded in the recapture matrix in its birth year.</p>
+<p>You could go back to the original data to fix these problems (in fact, that is advisable since there are strong assumptions made by these automatic fixes!). However, for the lazy, there is an option in the <code>DataCheck()</code> function for fixing these problems programatically. In this case, the list object produced by <code>DataCheck()</code> will include a new “fixed” data set. Please see the <code>?DataCheck</code> for details.</p>
+<pre class="sourceCode r"><code class="sourceCode r">checkedData &lt;-<span class="st"> </span><span class="kw">DataCheck</span>(myData, <span class="dv">1970</span>, <span class="dv">2000</span>, <span class="dt">autofix =</span> <span class="kw">rep</span>(<span class="dv">1</span>,<span class="dv">7</span>))
+<span class="co">#&gt; The following rows have observations that occur after the year of death:</span>
+<span class="co">#&gt; [1]  38 266 272 304 318 401 509 576</span>
+<span class="co">#&gt; Observations that post-date year of death have been removed.</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; The following rows have observations that occur before the year of birth:</span>
+<span class="co">#&gt; [1] 182 556</span>
+<span class="co">#&gt; Observations that pre-date year of birth have been removed.</span></code></pre>
+<p>You can confirm that the data are correctly formatted by trying to run BaSTA. You should be greeted by a message telling you that <code>basta</code> is running. We’ll go on to this in the next section.</p>
+<pre class="sourceCode r"><code class="sourceCode r">fixedData &lt;-<span class="st"> </span>checkedData$newData
+model1 &lt;-<span class="st"> </span><span class="kw">basta</span>(fixedData, <span class="dt">studyStart =</span> <span class="dv">1970</span>, <span class="dt">studyEnd =</span> <span class="dv">2000</span>)</code></pre>
 
         </div>
       </div>

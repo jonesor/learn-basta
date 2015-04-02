@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>The shape argument &middot; Learn BaSTA.</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="www/bootstrap.min.css" rel="stylesheet">
+    <link href="www/highlight.css" rel="stylesheet">
+
+    <link href='http://fonts.googleapis.com/css?family=Inconsolata:400,700'
+      rel='stylesheet' type='text/css'>
+  </head>
+
+  <body>
+
+    <div class="container">
+
+      <div class="masthead">
+        <ul class="nav nav-pills pull-right">
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              Table of contents<b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu pull-right" role="menu">
+              <li><a href="Introduction.html">Introduction</a></li>
+
+<li class="dropdown-header">Basics</li>
+<li><a href="Preparing-data.html">Preparing data</a></li>
+<li><a href="Basic-BaSTA.html">Basic BaSTA</a></li>
+<li><a href="Throwing-shapes.html">The shape argument</a></li>
+<li><a href="Comparing-models.html">Comparing models</a></li>
+<li><a href="Covariates.html">Covariates</a></li>
+
+<li class="dropdown-header">Digging deeper</li>
+<li><a href="Negative-senescence.html">Negative senescence</a></li>
+<li><a href="Sex-differences.html">Sex differences</a></li>
+<li><a href="Simulate-datasets.html">Simulate datasets</a></li>
+
+<li class="dropdown-header">Literature</li>
+<li><a href="References.html">References</a></li>
+<li><a href="Basta-citations.html">Citations of BaSTA</a></li>
+
+            </ul>
+          </li>
+        </ul>
+
+        <h3 class="muted"><a href="/learn-basta/">Learn BaSTA in R</a> <small>by Owen Jones, Maren Rebke and Fernando Colchero</small></h3>
+        <hr>
+      </div>
+
+      <div class="row">
+        <div class="col-xs-12 col-sm-3" id="nav">
+        <div class="well">
+          We occasionally run workshops on BaSTA. The next one will (probably) be at the British Ecological Society meeting in Edinburgh, Dec. 2015.
+        </div>
+
+
+        <h4>Page contents</h4>
+          <ul class="list-unstyled" id="toc"></ul>
+
+          <hr>
+          <p><a href="/learn-basta/gotbugs.html">Report bugs.</a></p>
+
+
+        </div>
+
+    <div id="content" class="col-xs-12 col-sm-8 pull-right">
+          <!---
+1. Use standard R Markdown.
+2. Headings with "##" will be automatically turned into table of contents. Therefore, for longer tutorials please use this facility.
+3. Check that R studio will knit into an HTML document.
+4. You can contribute the .rmd file via GitHub (https://github.com/jonesor/learn-basta), **to the master branch ONLY**. To do that you must be a collaborator on the repository (contact me with your username), or you can fork the repository and send a pull request (https://help.github.com/articles/using-pull-requests/).
+5. Alternatively you can email me the *rmd file and associated files (e.g. any figures/diagrams.)
+6. I will then compile the site on my computer and push it to the gh-pages branch (which is where the website lives). You could also do this, but you will need to have Jekyll and pandoc installed.
+-->
+<h2 id="intro">Introduction</h2>
+<p>There are three possible <code>shape</code> arguments in <code>basta</code>. These are <code>simple</code>, <code>Makeham</code> and <code>bathtub</code>. The <code>simple</code> argument specifies that the model should be fitted using the unaltered functional form for mortality (so far, this has been Gompertz). The other two arguments, <code>Makeham</code> and <code>bathtub</code> are modifiers to the underlying model adding in a term for age-independent mortality and an early-life decline in age-specific mortality respectively . If you’ve been working your way through these exercises you will have already fitted a Gompertz model with a <code>simple</code> shape - it is the default argument. This section will briefly run through the other two options.</p>
+<h2 id="shape-argument">Variations on the Gompertz - the bathtub shape argument</h2>
+<p>Aficionados of the Gompertz function will already know that the model, although used to model mortality in many species, is not well suited to examining mortality before the age of maturity. This is because it does not allow for infant/juvenile mortality, which typically manifests as high mortality early in life, which declines with age. Thus, over the whole life course of a typical mammal, mortality starts high, declines with age towards maturity, and then increases again. One way of accounting for this kind of trajectory is to use a <code>bathtub</code> model such as the <em>Siler model</em>. This model features two Gompertz functions: a declining Gompertz function to capture the juvenile phase, and an increasing one after maturity which captures the senescence phase.</p>
+<h2 id="makeham">The Makeham argument</h2>
+<p>But what if you <em>are</em> modelling mortality from maturity? In this case you may wish to check on the addition of a term for age-independent mortality. This is known as a <em>Makeham</em> term and can be specified as a shape argument in the basta model (<code>shape = &quot;Makeham</code>). This adds a constant to the Gompertz model (which would then be referred to as a “<em>Gompertz-Makeham</em>” model). Note that the Siler model described above also features a term for age-independent mortality.</p>
+<p>Try fitting BaSTA models with these two variations.</p>
+<p>First the Gompertz-Makeham model:</p>
+<pre class="sourceCode r"><code class="sourceCode r">gmnc &lt;-<span class="st"> </span><span class="kw">basta</span>(dat, <span class="dt">studyStart =</span> <span class="dv">1970</span>, <span class="dt">studyEnd =</span> <span class="dv">2000</span>,
+                   <span class="dt">model =</span> <span class="st">&quot;GO&quot;</span>, <span class="dt">shape =</span> <span class="st">&quot;Makeham&quot;</span>)</code></pre>
+<p>Secondly the Gompertz-bathtub model (also known as a Siler model):</p>
+<pre class="sourceCode r"><code class="sourceCode r">gbnc &lt;-<span class="st"> </span><span class="kw">basta</span>(dat, <span class="dt">studyStart =</span> <span class="dv">1970</span>, <span class="dt">studyEnd =</span> <span class="dv">2000</span>,
+                     <span class="dt">model =</span> <span class="st">&quot;GO&quot;</span>, <span class="dt">shape =</span> <span class="st">&quot;bathtub&quot;</span>)</code></pre>
+<!--
+Save out this object so I don't have to run BaSTA each time I compile this.
+save(gmnc,file = "data/gmnc.Rdata") 
+save(gbnc,file = "data/gbnc.Rdata") 
+-->
+<p>Take a look at the model summaries, and the trajectory plots produced.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(gbnc)
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Output from BaSTA version 1.9.4</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Call:</span>
+<span class="co">#&gt; Model                    : GO</span>
+<span class="co">#&gt; Shape                    : bathtub</span>
+<span class="co">#&gt; Covars. structure        : fused</span>
+<span class="co">#&gt; Minimum age              : 0</span>
+<span class="co">#&gt; Cat. covars.             : </span>
+<span class="co">#&gt; Cont. covars.            :   </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Model settings:</span>
+<span class="co">#&gt;    niter   burnin thinning     nsim </span>
+<span class="co">#&gt;    11000     1001       20        1 </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Jumps and priors:</span>
+<span class="co">#&gt;    Jump.sds Prior.means Prior.sds</span>
+<span class="co">#&gt; a0  2.56994       -2.00         1</span>
+<span class="co">#&gt; a1  4.59737        0.01         1</span>
+<span class="co">#&gt; c   0.02222        0.00         1</span>
+<span class="co">#&gt; b0  0.20560       -3.00         1</span>
+<span class="co">#&gt; b1  0.01576        0.01         1</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Mean Kullback-Leibler</span>
+<span class="co">#&gt; discrepancy calibration (KLDC):</span>
+<span class="co">#&gt; KLDC was not calculated due to insufficient number</span>
+<span class="co">#&gt;   of simulations to estimate convergence.</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Coefficients:</span>
+<span class="co">#&gt;          Estimate   StdErr Lower95%CI Upper95%CI SerAutocor UpdateRate</span>
+<span class="co">#&gt; a0      -4.245016 0.623819  -5.543239   -3.15826    0.02081     0.2395</span>
+<span class="co">#&gt; a1       1.382111 0.786008   0.030088    3.00732    0.13548     0.2457</span>
+<span class="co">#&gt; c        0.009247 0.007835   0.000261    0.02877    0.66771     0.2571</span>
+<span class="co">#&gt; b0      -3.414223 0.221632  -3.947251   -3.07668    0.86703     0.2477</span>
+<span class="co">#&gt; b1       0.121239 0.014781   0.096193    0.15286    0.84311     0.2482</span>
+<span class="co">#&gt; pi.1970  0.503127 0.008309   0.486666    0.51871    0.14200     1.0000</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Convergence:</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Convergence calculations require more than one run. </span>
+<span class="co">#&gt; To estimate potential scale reduction run at least two simulations.</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; DIC:</span>
+<span class="co">#&gt; DIC was not calculated due to insufficient number of simulations to estimate convergence.</span></code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(gbnc, <span class="dt">plot.trace =</span> <span class="ot">FALSE</span>)</code></pre>
+<p><img src="figures/unnamed-chunk-6.png" title="plot of chunk unnamed-chunk-6" alt="plot of chunk unnamed-chunk-6" width="384" /></p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(gmnc)
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Output from BaSTA version 1.9.4</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Call:</span>
+<span class="co">#&gt; Model                    : GO</span>
+<span class="co">#&gt; Shape                    : Makeham</span>
+<span class="co">#&gt; Covars. structure        : fused</span>
+<span class="co">#&gt; Minimum age              : 0</span>
+<span class="co">#&gt; Cat. covars.             : </span>
+<span class="co">#&gt; Cont. covars.            :   </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Model settings:</span>
+<span class="co">#&gt;    niter   burnin thinning     nsim </span>
+<span class="co">#&gt;    11000     1001       20        1 </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Jumps and priors:</span>
+<span class="co">#&gt;    Jump.sds Prior.means Prior.sds</span>
+<span class="co">#&gt; c   0.02142        0.00         1</span>
+<span class="co">#&gt; b0  0.20100       -3.00         1</span>
+<span class="co">#&gt; b1  0.01709        0.01         1</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Mean Kullback-Leibler</span>
+<span class="co">#&gt; discrepancy calibration (KLDC):</span>
+<span class="co">#&gt; KLDC was not calculated due to insufficient number</span>
+<span class="co">#&gt;   of simulations to estimate convergence.</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Coefficients:</span>
+<span class="co">#&gt;         Estimate   StdErr Lower95%CI Upper95%CI SerAutocor UpdateRate</span>
+<span class="co">#&gt; c        0.00967 0.007108  0.0003509    0.02718    0.53990     0.2634</span>
+<span class="co">#&gt; b0      -3.36946 0.181641 -3.7720541   -3.06100    0.81608     0.2481</span>
+<span class="co">#&gt; b1       0.11920 0.012284  0.0964783    0.14694    0.82251     0.2355</span>
+<span class="co">#&gt; pi.1970  0.50306 0.007733  0.4875000    0.51779    0.06829     1.0000</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Convergence:</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Convergence calculations require more than one run. </span>
+<span class="co">#&gt; To estimate potential scale reduction run at least two simulations.</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; DIC:</span>
+<span class="co">#&gt; DIC was not calculated due to insufficient number of simulations to estimate convergence.</span></code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(gmnc, <span class="dt">plot.trace =</span> <span class="ot">FALSE</span>)</code></pre>
+<p><img src="figures/unnamed-chunk-8.png" title="plot of chunk unnamed-chunk-8" alt="plot of chunk unnamed-chunk-8" width="384" /></p>
+<p>The plots are very similar. So which is the best model? We come on to that in the next section.</p>
+
+        </div>
+      </div>
+
+      <div class="footer">
+        <hr>
+        <p>Based on Hadley Wickham's Advanced R Programming site. Powered by <a href="http://jekyllrb.com/">jekyll</a>,
+          <a href="http://yihui.name/knitr/">knitr</a>, and
+          <a href="http://johnmacfarlane.net/pandoc/">pandoc</a>. Source
+          available on <a href="https://github.com/jonesor/learn-basta/">github</a>.
+        </p>
+      </div>
+
+    </div> <!-- /container -->
+
+  <script src="//code.jquery.com/jquery.js"></script>
+  <script src="www/bootstrap.min.js"></script>
+  <script src="www/toc.js"></script>
+
+  </body>
+</html>
