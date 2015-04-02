@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Comparing models &middot; Learn BaSTA.</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="www/bootstrap.min.css" rel="stylesheet">
+    <link href="www/highlight.css" rel="stylesheet">
+
+    <link href='http://fonts.googleapis.com/css?family=Inconsolata:400,700'
+      rel='stylesheet' type='text/css'>
+  </head>
+
+  <body>
+
+    <div class="container">
+
+      <div class="masthead">
+        <ul class="nav nav-pills pull-right">
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              Table of contents<b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu pull-right" role="menu">
+              <li><a href="Introduction.html">Introduction</a></li>
+
+<li class="dropdown-header">Basics</li>
+<li><a href="Preparing-data.html">Preparing data</a></li>
+<li><a href="Basic-BaSTA.html">Basic BaSTA</a></li>
+<li><a href="Throwing-shapes.html">The shape argument</a></li>
+<li><a href="Comparing-models.html">Comparing models</a></li>
+<li><a href="Covariates.html">Covariates</a></li>
+
+<li class="dropdown-header">Digging deeper</li>
+<li><a href="Negative-senescence.html">Negative senescence</a></li>
+<li><a href="Sex-differences.html">Sex differences</a></li>
+<li><a href="Simulate-datasets.html">Simulate datasets</a></li>
+
+<li class="dropdown-header">Literature</li>
+<li><a href="References.html">References</a></li>
+<li><a href="Basta-citations.html">Citations of BaSTA</a></li>
+
+            </ul>
+          </li>
+        </ul>
+
+        <h3 class="muted"><a href="/learn-basta/">Learn BaSTA in R</a> <small>by Owen Jones, Maren Rebke and Fernando Colchero</small></h3>
+        <hr>
+      </div>
+
+      <div class="row">
+        <div class="col-xs-12 col-sm-3" id="nav">
+        <div class="well">
+          We occasionally run workshops on BaSTA. The next one will (probably) be at the British Ecological Society meeting in Edinburgh, Dec. 2015.
+        </div>
+
+
+        <h4>Page contents</h4>
+          <ul class="list-unstyled" id="toc"></ul>
+
+          <hr>
+          <p><a href="/learn-basta/gotbugs.html">Report bugs.</a></p>
+
+
+        </div>
+
+    <div id="content" class="col-xs-12 col-sm-8 pull-right">
+          <!---
+1. Use standard R Markdown.
+2. Headings with "##" will be automatically turned into table of contents. Therefore, for longer tutorials please use this facility.
+3. Check that R studio will knit into an HTML document.
+4. You can contribute the .rmd file via GitHub (https://github.com/jonesor/learn-basta), **to the master branch ONLY**. To do that you must be a collaborator on the repository (contact me with your username), or you can fork the repository and send a pull request (https://help.github.com/articles/using-pull-requests/).
+5. Alternatively you can email me the *rmd file and associated files (e.g. any figures/diagrams.)
+6. I will then compile the site on my computer and push it to the gh-pages branch (which is where the website lives). You could also do this, but you will need to have Jekyll and pandoc installed.
+-->
+<h2 id="intro">Introduction</h2>
+<p>You will no doubt already have noticed that the two arguments concerning the mortality model, <code>model</code> and <code>shape</code> allow for a large number of variations. This section will explore these variations and introduce a new function <code>multibasta()</code> which simplifies fitting several models to the same data set.</p>
+<h2 id="alternative-forms">Alternative functional forms: one at a time</h2>
+<p>To test other functional forms of age-specific mortality such as Weibull (REF), logistic (REF) or a simple model that assumes that mortality is constant at all ages (i.e. exponential survival), we can use the <code>model</code> argument in function <code>basta()</code>. For example, let’s run a Weibull model that assumes that mortality is a power function of age, which only requires to add to the arguments of the function “<code>model = &quot;WE&quot;</code>”. We will call the output object <code>wsnc</code> for “Weibull, simple, no covariates”. Here is the updated code</p>
+<pre class="sourceCode r"><code class="sourceCode r">wsnc &lt;-<span class="st"> </span><span class="kw">basta</span>(dat, <span class="dt">studyStart =</span> <span class="dv">1970</span>, <span class="dt">studyEnd =</span> <span class="dv">2000</span>, <span class="dt">model =</span> <span class="st">&quot;WE&quot;</span>,
+              <span class="dt">nsim =</span> <span class="dv">4</span>, <span class="dt">ncpus =</span> <span class="dv">4</span>, <span class="dt">parallel =</span> <span class="ot">TRUE</span>)</code></pre>
+<!--
+Save out this object so I don't have to run BaSTA each time I compile this.
+save(wsnc,file = "data/wsnc.Rdata") 
+-->
+<p>As before, use function <code>summary()</code> as</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(wsnc)
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Output from BaSTA version 1.9.4</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Call:</span>
+<span class="co">#&gt; Model                    : WE</span>
+<span class="co">#&gt; Shape                    : simple</span>
+<span class="co">#&gt; Covars. structure        : fused</span>
+<span class="co">#&gt; Minimum age              : 0</span>
+<span class="co">#&gt; Cat. covars.             : </span>
+<span class="co">#&gt; Cont. covars.            :   </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Model settings:</span>
+<span class="co">#&gt;    niter   burnin thinning     nsim </span>
+<span class="co">#&gt;    11000     1001       20        4 </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Jumps and priors:</span>
+<span class="co">#&gt;    Jump.sds Prior.means Prior.sds</span>
+<span class="co">#&gt; b0 0.256663        1.50         1</span>
+<span class="co">#&gt; b1 0.009318        0.05         1</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Mean Kullback-Leibler</span>
+<span class="co">#&gt; discrepancy calibration (KLDC):</span>
+<span class="co">#&gt; KLDC was not calculated due to lack of convergence,</span>
+<span class="co">#&gt;  or because covariates were not included in the model.</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Coefficients:</span>
+<span class="co">#&gt;         Estimate   StdErr Lower95%CI Upper95%CI SerAutocor UpdateRate</span>
+<span class="co">#&gt; b0       1.84304 0.082085    1.68708    2.00982     0.4159     0.2524</span>
+<span class="co">#&gt; b1       0.08921 0.002523    0.08458    0.09444     0.2836     0.2431</span>
+<span class="co">#&gt; pi.1970  0.49975 0.007950    0.48420    0.51501     0.1203     1.0000</span>
+<span class="co">#&gt;         PotScaleReduc</span>
+<span class="co">#&gt; b0             1.0005</span>
+<span class="co">#&gt; b1             1.0020</span>
+<span class="co">#&gt; pi.1970        0.9992</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Convergence:</span>
+<span class="co">#&gt; Appropriate convergence reached for all parameters.</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; DIC:</span>
+<span class="co">#&gt; 7428</span></code></pre>
+<p>You can use the function <code>plot</code> to confirm that the chains have converged properly with</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(wsnc)</code></pre>
+<p><img src="figures/unnamed-chunk-5.png" title="plot of chunk unnamed-chunk-5" alt="plot of chunk unnamed-chunk-5" width="480" /></p>
+<p>Here is the fancy plot</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(wsnc, <span class="dt">fancy =</span> <span class="ot">TRUE</span>)</code></pre>
+<p><img src="figures/unnamed-chunk-6.png" title="plot of chunk unnamed-chunk-6" alt="plot of chunk unnamed-chunk-6" width="480" /></p>
+<p>Now let’s run a logistic model and compare it to the Gompertz and Weibull outputs. To do this, we only have to change the argument to <code>model = &quot;LO&quot;</code>. We will call the output object <code>lsnc</code> for “<em>logistic, simple, no covariates</em>.”</p>
+<pre class="sourceCode r"><code class="sourceCode r">lsnc &lt;-<span class="st"> </span><span class="kw">basta</span>(dat, <span class="dt">studyStart =</span> <span class="dv">1970</span>, <span class="dt">studyEnd =</span> <span class="dv">2000</span>, <span class="dt">model =</span> <span class="st">&quot;LO&quot;</span>,  <span class="dt">niter =</span> <span class="dv">22000</span>, <span class="dt">burnin =</span> <span class="dv">2002</span>, <span class="dt">nsim =</span> <span class="dv">4</span>, <span class="dt">ncpus =</span> <span class="dv">2</span>, <span class="dt">parallel =</span> <span class="ot">TRUE</span>)</code></pre>
+<!--
+Save out this object so I don't have to run BaSTA each time I compile this.
+save(lsnc,file = "data/lsnc.Rdata") 
+-->
+<p>which should produce a summary as</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(lsnc)
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Output from BaSTA version 1.9.4</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Call:</span>
+<span class="co">#&gt; Model                    : LO</span>
+<span class="co">#&gt; Shape                    : simple</span>
+<span class="co">#&gt; Covars. structure        : fused</span>
+<span class="co">#&gt; Minimum age              : 0</span>
+<span class="co">#&gt; Cat. covars.             : </span>
+<span class="co">#&gt; Cont. covars.            :   </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Model settings:</span>
+<span class="co">#&gt;    niter   burnin thinning     nsim </span>
+<span class="co">#&gt;    22000     2002       20        4 </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Jumps and priors:</span>
+<span class="co">#&gt;    Jump.sds Prior.means Prior.sds</span>
+<span class="co">#&gt; b0  0.35658      -3e+00         1</span>
+<span class="co">#&gt; b1  0.04093       1e-02         1</span>
+<span class="co">#&gt; b2  0.35580       1e-10         1</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Mean Kullback-Leibler</span>
+<span class="co">#&gt; discrepancy calibration (KLDC):</span>
+<span class="co">#&gt; KLDC was not calculated due to lack of convergence,</span>
+<span class="co">#&gt;  or because covariates were not included in the model.</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Coefficients:</span>
+<span class="co">#&gt;         Estimate   StdErr Lower95%CI Upper95%CI SerAutocor UpdateRate</span>
+<span class="co">#&gt; b0       -3.8587 0.260738    -4.4150    -3.3967     0.7924     0.2737</span>
+<span class="co">#&gt; b1        0.3292 0.071855     0.2019     0.4756     0.9196     0.2763</span>
+<span class="co">#&gt; b2        1.5208 0.501926     0.6515     2.5333     0.9107     0.2757</span>
+<span class="co">#&gt; pi.1970   0.4995 0.008287     0.4837     0.5157     0.1719     1.0000</span>
+<span class="co">#&gt;         PotScaleReduc</span>
+<span class="co">#&gt; b0              1.002</span>
+<span class="co">#&gt; b1              1.010</span>
+<span class="co">#&gt; b2              1.017</span>
+<span class="co">#&gt; pi.1970         1.002</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Convergence:</span>
+<span class="co">#&gt; Appropriate convergence reached for all parameters.</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; DIC:</span>
+<span class="co">#&gt; 7757</span></code></pre>
+<p>and a fancy plot that should look like the following</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(lsnc, <span class="dt">fancy =</span> <span class="ot">TRUE</span>)</code></pre>
+<p><img src="figures/unnamed-chunk-10.png" title="plot of chunk unnamed-chunk-10" alt="plot of chunk unnamed-chunk-10" width="480" /></p>
+<h2 id="multibasta">Go have a coffee… multibasta</h2>
+<p>With this version of BaSTA we provide the function <code>multibasta</code> which allows users to run different models and shapes without having to specify them one at a time. The only difference with function <code>basta()</code> is that, instead of specifying a single model and shape, we can use arguments <code>models</code> and <code>shapes</code> to specify more than one functional forms. Let’s run once again the analysis above and we will store the results in the object <code>multinc</code>. This may take some time!</p>
+<pre class="sourceCode r"><code class="sourceCode r">multinc &lt;-<span class="st"> </span><span class="kw">multibasta</span>(dat, <span class="dt">studyStart =</span> <span class="dv">1970</span>, <span class="dt">studyEnd =</span> <span class="dv">2000</span>, <span class="dt">niter =</span> <span class="dv">22000</span>, <span class="dt">burnin =</span> <span class="dv">2001</span>, <span class="dt">models =</span> <span class="kw">c</span>(<span class="st">&quot;GO&quot;</span>, <span class="st">&quot;WE&quot;</span>, <span class="st">&quot;LO&quot;</span>), <span class="dt">shapes =</span> <span class="st">&quot;simple&quot;</span>,
+                      <span class="dt">nsim =</span> <span class="dv">4</span>, <span class="dt">ncpus =</span> <span class="dv">4</span>, <span class="dt">parallel =</span> <span class="ot">TRUE</span>)</code></pre>
+<!--
+Save out this object so I don't have to run BaSTA each time I compile this.
+save(multinc,file = "data/multinc.Rdata") 
+-->
+<h2 id="model-fit">Model fit</h2>
+<p>To compare the outputs between parameters with different functional forms, BaSTA provides a measure of model fit known as Deviance Information Criterion, DIC (for a description see box 1). As with other information theoretic measures such as AIC or BIC, the model with the lowest DIC value is assumed to provide the best fit. To extract the DIC values and compare the models, we can simply refer to function <code>summary()</code> or type</p>
+<pre class="sourceCode r"><code class="sourceCode r">wsnc$DIC
+lsnc$DIC</code></pre>
+<p>Here is where using the output from function <code>multibasta()</code> might be a better option. We can visualize the results with function <code>summary()</code> as</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(multinc)
+<span class="co">#&gt; </span>
+<span class="co">#&gt; BaSTA version 1.9.4</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Call:</span>
+<span class="co">#&gt; Covars. structure        : fused</span>
+<span class="co">#&gt; Minimum age              : 0</span>
+<span class="co">#&gt; Cat. covars.             : </span>
+<span class="co">#&gt; Cont. covars.            :   </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Model settings:</span>
+<span class="co">#&gt;    niter   burnin thinning     nsim </span>
+<span class="co">#&gt;    22000     2001       20        4 </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; DICs:</span>
+<span class="co">#&gt;   model  shape D.ave D.mode   pD k  DIC DICdiff Rank</span>
+<span class="co">#&gt; 3    WE simple  5336   3260 2076 3 7412     0.0    1</span>
+<span class="co">#&gt; 2    GO simple  5315   3181 2133 3 7448    35.7    2</span>
+<span class="co">#&gt; 4    LO simple  5364   3085 2279 4 7643   230.9    3</span></code></pre>
+<!--- commented out until I figure out how to render the maths
+## Details -- Model Fit: Deviance Information Criterion, DIC
+
+
+If all parameters have converged, BaSTA calculates the deviance information criterion (DIC; Spiegelhalter, 2002), which has been described as a measure of predictive power and a criterion for model fit. DIC approximates the expected predictive deviance, and is calculated as
+
+$\mathrm{DIC} = 2\hat{D}_{avg}(y) - D_{\hat{\theta}}(y)$
+
+
+where $y$ denotes the observed data, $\hat{D}_{avg}(y)$ is the mean discrepancy between the data and the model as a function of the parameters $\theta$, averaged over the posterior distribution, and $D_{\hat{\theta}}(y)$ is the discrepancy at the posterior mode (here represented by the point estimate $\hat{\theta}$). In order to improve the measure provided, BaSTA's DIC is calculated as an approximation of the group-marginalized DIC presented by Millar (2009). 
+-->
+
+        </div>
+      </div>
+
+      <div class="footer">
+        <hr>
+        <p>Based on Hadley Wickham's Advanced R Programming site. Powered by <a href="http://jekyllrb.com/">jekyll</a>,
+          <a href="http://yihui.name/knitr/">knitr</a>, and
+          <a href="http://johnmacfarlane.net/pandoc/">pandoc</a>. Source
+          available on <a href="https://github.com/jonesor/learn-basta/">github</a>.
+        </p>
+      </div>
+
+    </div> <!-- /container -->
+
+  <script src="//code.jquery.com/jquery.js"></script>
+  <script src="www/bootstrap.min.js"></script>
+  <script src="www/toc.js"></script>
+
+  </body>
+</html>
