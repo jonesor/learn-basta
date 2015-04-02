@@ -16,7 +16,88 @@ output: bookdown::html_chapter
 
 ## Introduction {#intro}
 
-Content is coming!
+Before using Bayesian Survival Trajectory Analysis (BaSTA) you will need to ensure that your data are in the format that the `basta` package expects. The required format is pretty simple. BaSTA requires a data frame where each row represents an individual and with each column giving information about that individual and its capture or observation history. The following gives further details and outlines the use of the functions `CensusToCaptHist()`, and `merge()` to create a simple data frame.
 
+```{r, echo=FALSE, results='hide', message=FALSE}
+setwd("~/learn-basta")
+library(BaSTA)
+```
+
+## Formatting data for analysis
+
+The data must be arranged in a data frame where each row corresponds to a single individual. The first column corresponds to the individual unique IDs and the second and third columns give the years of birth and death (if known) respectively. 
+
+Next, there should be a number of columns corresponding to the study span where the capture or observation histories are recorded. For example, if the study spans 10-years, and you are working on a year-by-year basis, there should be 10 columns (one for each year). Thus, if an individual is observed in a year, this is recorded with a `1`, and if the individual is unobserved, this is recorded with a `0`. Note that the years of birth and death are not coded as detection (they should recieve a `0`). [Timescales vary depending on the organism: replace "years" with "months","weeks", "days", etc. as appropriate in the above description!]
+
+Finally, if covariates are to be included in the analysis, additional columns can be added on the right-hand side. The format required for these columns depends on whether the covariates are categorical or continuous - we'll get to that in a moment.
+
+BaSTA incudes some helper functions to get the data into the correct format.
+
+Capture histories are often recorded as what we term survey or census tables. Typically, these tables have one row for each time an individual is observed, and include one column for individual IDs and one column for detection date. Often, these tables are stored in a spreadsheet software (e.g. `MS Excel`). We recommend that users save it either in tab delimited text (`.txt`) or comma separated value (`.csv`) formats so they can be easily read into R. Below is the code to read a table that was previously saved in `Excel` as tab delimited text:
+
+```{r}
+survey <- read.csv("data/survey1.csv", header = TRUE)
+head(survey)
+```
+
+One can then use the `CensusToCaptHist()` function to construct the recapture matrix required by BaSTA.
+
+The ID argument in the `CensusToCaptHist()` function, takes a vector with the individual IDs, in this case the second column in "survey", along with the d argument, which is a vector of dates on which each individual was detected (i.e. the first column in ``survey''), and argument dformat which is (optionally) used to specify the date format used in d. In case the d argument is a character string based on a date format, or of class date, the minimun time interval can be specified with argument timeInt, which takes a single character value, with the folowing options:
+
+`Y` for years (default); `M` for months; `W` for weeks; and `D` for days. The resulting capture history matrix (`Y`) looks like this:
+
+
+
+```{r}
+Y <- CensusToCaptHist(ID = survey[, 2], d = survey[, 1])
+head(Y)
+```
+
+Please try this with the dataset "`surveyData.csv`". Read in the data, take a look at it using `{head()`, an use the function `CensusToCaptHist()` to build a capture history.
+
+Your code will look something like this:
+
+```{r}
+survey <- read.csv("data/surveyData.csv", header = TRUE)
+Y <- CensusToCaptHist(ID = survey$ID, d = survey$Year)
+```
+
+Now get the birth and death information for the population.
+
+```{r}
+birthDeath <- read.csv("data/birthsAndDeaths.csv", header = TRUE)
+head(birthDeath)
+```
+
+Merge the two datasets together. We need to specify that we should include ALL records for all individuals using the `all = TRUE` argument. This is because there are many individuals where we do not know their birth and/or death dates. Notice how these individuals will now have `NA` values for their birth/death years.
+
+```{r}
+myData <- merge(birthDeath, Y, by = "ID", all = TRUE)
+head(myData)
+```
+
+You now need to replace the `NA` values with `0`.
+
+```{r}
+myData[is.na(myData)] <- 0
+head(myData)
+tail(myData)
+```
+
+## Checking the integrity of the data
+
+The data set looks OK, but we can check it using the `DataCheck()` function. This function creates a new R list object that includes an indication of whether there were problems with the data, and what those problems were.
+
+```{r}
+checkedData <- DataCheck(myData, 1970, 2000)
+```
+
+The data have a couple of problems: there are individuals that have observations *after* the year of death, there are observations that occur *before* birth, and there is an individual with a `1` recorded in the recapture matrix in its birth year.
+
+You could go back to the original data to fix these problems (in fact, that is advisable since there are strong assumptions made by these automatic fixes!). However, for the lazy, there is an option in the `DataCheck()` function for fixing these problems programatically. In this case, the list object produced by `DataCheck()` will include a new "fixed" data set. Please see the `?DataCheck` for details.
+
+```{r}
+checkedData <- DataCheck(myData, 1970, 2000, autofix = rep(1,7))
+```
 
 
