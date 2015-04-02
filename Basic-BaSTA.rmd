@@ -30,13 +30,26 @@ For this section, let's load the full dataset without errors... Read in the file
 dat <- read.csv("data/fixedData.csv", header = TRUE)
 ```
 
+
+
 Now you have created a BaSTA-ready data set its time to fit a simple model. In fact, if you successfully finished the last session, you will already have fitted a BaSTA model.
 
 To recap, this is how to do it...
 
-```{r, cache=TRUE}
+```{r, eval = FALSE}
 gsnc <- basta(dat, studyStart = 1970, studyEnd = 2000)
 ```
+
+<!--
+Save out this object so I don't have to run BaSTA each time I compile this.
+save(gsnc,file = "data/gsnc.Rdata") 
+-->
+
+```{r, echo=FALSE, results='hide', message=FALSE}
+#load the pre-run basta object
+load("data/gsnc.Rdata")
+```
+
 
 where, for simplicity we have named the BaSTA output object as `gsnc` which stands for _Gompertz, simple, no covariates_.
 
@@ -78,7 +91,7 @@ plot(gsnc, plot.trace = FALSE)
 ## Fancy plots {#fancy-plots}
 Finally, you can produce what we call a "fancy plot" that combines the densities of the mortality parameters and the trajectories of mortality and survival into the same plot as
 
-```{r, eval=FALSE, fig.height=7,fig.width=4}
+```{r, eval=TRUE, fig.height=7,fig.width=4}
 plot(gsnc, fancy = TRUE)
 ```
 

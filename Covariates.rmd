@@ -17,7 +17,6 @@ setwd("~/learn-basta")
 library(BaSTA)
 library(snowfall)
 dat <- read.csv("data/fixedData.csv", header = TRUE)
-
 ```
 
 ## Introduction {#intro}
@@ -70,15 +69,31 @@ datCovs <- data.frame(dat, covars[, -1])
 
 Now, to run the analysis, we simply use function `basta()` as we did before. Thus, to run a Gompertz model and save the output in an object `gssc` you can type
 
-```{r, cache=TRUE}
+```{r, eval = FALSE}
 gssc <- basta(datCovs, studyStart = 1970, studyEnd = 2000, model = "LO",
               nsim = 2, ncpus = 2, parallel = TRUE)
+```
+
+<!--
+Save out this object so I don't have to run BaSTA each time I compile this.
+save(gssc,file = "data/gssc.Rdata") 
+-->
+
+```{r, echo=FALSE, results='hide', message=FALSE}
+#load the pre-run basta objects
+load("data/gssc.Rdata")
 ```
 
 which produces the following summary
 
 ```{r}
 summary(gssc)
+```
+
+Let's have a look at the survival and mortality trajectories:
+
+```{r, fig.height=4,fig.width=5}
+plot(gssc, fancy = TRUE)
 ```
 
 After running the model, you can verify if the inclusion of the sex covariate improved the fit by comparing the DICs between the `multiout` object and `gssc`. Now you can try to run the model for the Weibull and logistic models either individually (create objects called `wssc` and `lssc`) or in one go using `multibasta()` to create a multi-BaSTA object called `multisc`).
@@ -114,13 +129,30 @@ Thus, $q(k)$ ranges from 0.5 to 1, where a value of 0.5 means that the posterior
 
 As you might have notticed, BaSTA by default assigns any categorical covariate as a function of the mortality parameters. We can change this in case we believe that these covariates only affect mortality proportionally, using a proportional hazards model. This is simply done with argument `covarsStruct = "prop.haz"`:
 
-```{r, cache=TRUE}
+```{r, eval=FALSE}
 gsscph <- basta(datCovs, studyStart = 1970, studyEnd = 2000, model = "LO",
               covarsStruct = "prop.haz", nsim = 2, ncpus = 2, 
               parallel = TRUE)
 ```
 
-Try running this model to see if it improves the fit.
+<!--
+Save out this object so I don't have to run BaSTA each time I compile this.
+save(gsscph,file = "data/gsscph.Rdata") 
+-->
+
+```{r, echo=FALSE, results='hide', message=FALSE}
+#load the pre-run basta objects
+load("data/gsscph.Rdata")
+```
+
+We can examine the DIC of the two models to see if using proportional hazards  improves the fit.
+
+```{r}
+gsscph$DIC
+gssc$DIC
+```
+
+It seems not, so we would favour the model with `fused` covariate structure.
 
 ## Adding continuous covariates {#continuous-covariates}
 
@@ -130,7 +162,7 @@ Finally, we will run the model adding a continuous covariate. To do this, let's 
 covars <- MakeCovMat("~ Sex + IndivMeasure - 1", data = covdat)
 ```
 
-Now join the tables
+Now join the tables:
 
 ```{r}
 datCovs <- data.frame(dat, covars[, -1])
@@ -138,9 +170,19 @@ datCovs <- data.frame(dat, covars[, -1])
 
 and run the analysis. Let's call the new object \mverb{gsbc} for "*Gompertz, simple, both covariates*:
 
-```{r, cache=TRUE}
+```{r, eval = FALSE}
 gsbc <- basta(datCovs, studyStart = 1970, studyEnd = 2000, model = "LO",
               nsim = 2, ncpus = 2, parallel = TRUE)
+```
+
+<!--
+Save out this object so I don't have to run BaSTA each time I compile this.
+save(gsbc,file = "data/gsbc.Rdata") 
+-->
+
+```{r, echo=FALSE, results='hide', message=FALSE}
+#load the pre-run basta objects
+load("data/gsbc.Rdata")
 ```
 
 Now you can try to evaluate which model performs best. What if you test different functional forms with arguments `model` and `shape` (you can do this with `mulitbasta()`).

@@ -36,17 +36,30 @@ Try fitting BaSTA models with these two variations.
 
 First the Gompertz-Makeham model:
 
-```{r, cache=TRUE}
+```{r, eval = FALSE}
 gmnc <- basta(dat, studyStart = 1970, studyEnd = 2000,
                    model = "GO", shape = "Makeham")
 ```
 
 Secondly the Gompertz-bathtub model (also known as a Siler model):
 
-```{r, cache=TRUE}
+```{r, eval = FALSE}
 gbnc <- basta(dat, studyStart = 1970, studyEnd = 2000,
                      model = "GO", shape = "bathtub")
 ```
+
+<!--
+Save out this object so I don't have to run BaSTA each time I compile this.
+save(gmnc,file = "data/gmnc.Rdata") 
+save(gbnc,file = "data/gbnc.Rdata") 
+-->
+
+```{r, echo=FALSE, results='hide', message=FALSE}
+#load the pre-run basta objects
+load("data/gmnc.Rdata")
+load("data/gbnc.Rdata")
+```
+
 
 Take a look at the model summaries, and the trajectory plots produced.
 
@@ -58,6 +71,13 @@ summary(gbnc)
 plot(gbnc, plot.trace = FALSE)
 ```
 
+```{r}
+summary(gmnc)
+```
 
+```{r, fig.height=8,fig.width=4}
+plot(gmnc, plot.trace = FALSE)
+```
 
+The plots are very similar. So which is the best model? We come on to that in the next section.
 

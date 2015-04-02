@@ -14,4 +14,15 @@ output: bookdown::html_chapter
 
 ## Introduction {#intro}
 
-Content is coming!
+Content is coming, but will give some attention to...
+
+- Functional forms of mortality
+- Senescence
+- Bayesian methods
+- What you need to run BaSTA
+-- CRAN version
+-- R-Forge development version
+-- dependencies (snowfall, snow, msm(?))
+-- R version, R-studio
+
+
