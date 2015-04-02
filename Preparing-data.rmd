@@ -23,7 +23,7 @@ setwd("~/learn-basta")
 library(BaSTA)
 ```
 
-## Formatting data for analysis
+## Formatting data for analysis {#formatting}
 
 The data must be arranged in a data frame where each row corresponds to a single individual. The first column corresponds to the individual unique IDs and the second and third columns give the years of birth and death (if known) respectively. 
 
@@ -84,7 +84,7 @@ head(myData)
 tail(myData)
 ```
 
-## Checking the integrity of the data
+## Checking the integrity of the data {#check-integrity}
 
 The data set looks OK, but we can check it using the `DataCheck()` function. This function creates a new R list object that includes an indication of whether there were problems with the data, and what those problems were.
 
