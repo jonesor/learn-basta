@@ -100,4 +100,12 @@ You could go back to the original data to fix these problems (in fact, that is a
 checkedData <- DataCheck(myData, 1970, 2000, autofix = rep(1,7))
 ```
 
+You can confirm that the data are correctly formatted by trying to run BaSTA. You should be greeted by a message telling you that `basta` is running.  We'll go on to this in the next section.
+
+```{r, eval=FALSE}
+fixedData <- checkedData$newData
+model1 <- basta(fixedData, studyStart = 1970, studyEnd = 2000)
+```
+
+
 

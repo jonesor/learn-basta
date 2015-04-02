@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<meta name="generator" content="pandoc" />
+
+<title>The shape argument</title>
+
+<script src="www/jquery-1.11.0/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="www/bootstrap-3.3.1/css/bootstrap.min.css" rel="stylesheet" />
+<script src="www/bootstrap-3.3.1/js/bootstrap.min.js"></script>
+<script src="www/bootstrap-3.3.1/shim/html5shiv.min.js"></script>
+<script src="www/bootstrap-3.3.1/shim/respond.min.js"></script>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+
+
+
+</head>
+
+<body>
+
+<div class="container">
+
+
+
+<!---
+1. Use standard R Markdown.
+2. Headings with "##" will be automatically turned into table of contents. Therefore, for longer tutorials please use this facility.
+3. Check that R studio will knit into an HTML document.
+4. You can contribute the .rmd file via GitHub (https://github.com/jonesor/learn-basta), **to the master branch ONLY**. To do that you must be a collaborator on the repository (contact me with your username), or you can fork the repository and send a pull request (https://help.github.com/articles/using-pull-requests/).
+5. Alternatively you can email me the *rmd file and associated files (e.g. any figures/diagrams.)
+6. I will then compile the site on my computer and push it to the gh-pages branch (which is where the website lives). You could also do this, but you will need to have Jekyll and pandoc installed.
+-->
+<h2 id="intro">Introduction</h2>
+<p>There are three possible <code>shape</code> arguments in <code>basta</code>. These are <code>simple</code>, <code>Makeham</code> and <code>bathtub</code>. The <code>simple</code> argument specifies that the model should be fitted using the unaltered functional form for mortality (so far, this has been Gompertz). The other two arguments, <code>Makeham</code> and <code>bathtub</code> are modifiers to the underlying model adding in a term for age-independent mortality and an early-life decline in age-specific mortality respectively . If you’ve been working your way through these exercises you will have already fitted a Gompertz model with a <code>simple</code> shape - it is the default argument. This section will briefly run through the other two options.</p>
+<h2 id="shape-argument">Variations on the Gompertz - the bathtub shape argument</h2>
+<p>Aficionados of the Gompertz function will already know that the model, although used to model mortality in many species, is not well suited to examining mortality before the age of maturity. This is because it does not allow for infant/juvenile mortality, which typically manifests as high mortality early in life, which declines with age. Thus, over the whole life course of a typical mammal, mortality starts high, declines with age towards maturity, and then increases again. One way of accounting for this kind of trajectory is to use a <code>bathtub</code> model such as the <em>Siler model</em>. This model features two Gompertz functions: a declining Gompertz function to capture the juvenile phase, and an increasing one after maturity which captures the senescence phase.</p>
+<h2 id="makeham">The Makeham argument</h2>
+<p>But what if you <em>are</em> modelling mortality from maturity? In this case you may wish to check on the addition of a term for age-independent mortality. This is known as a <em>Makeham</em> term and can be specified as a shape argument in the basta model (<code>shape = &quot;Makeham</code>). This adds a constant to the Gompertz model (which would then be referred to as a “<em>Gompertz-Makeham</em>” model). Note that the Siler model described above also features a term for age-independent mortality.</p>
+<p>Try fitting BaSTA models with these two variations.</p>
+<p>First the Gompertz-Makeham model:</p>
+<pre class="sourceCode r"><code class="sourceCode r">gmnc &lt;-<span class="st"> </span><span class="kw">basta</span>(dat, <span class="dt">studyStart =</span> <span class="dv">1970</span>, <span class="dt">studyEnd =</span> <span class="dv">2000</span>,
+                   <span class="dt">model =</span> <span class="st">&quot;GO&quot;</span>, <span class="dt">shape =</span> <span class="st">&quot;Makeham&quot;</span>)
+<span class="co">#&gt; No problems were detected with the data.</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Starting simulation to find jump sd&#39;s...  done.</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Simulation started...</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Total MCMC computing time: 4.45 mins.</span></code></pre>
+<p>Secondly the Gompertz-bathtub model (also known as a Siler model):</p>
+<pre class="sourceCode r"><code class="sourceCode r">gbnc &lt;-<span class="st"> </span><span class="kw">basta</span>(dat, <span class="dt">studyStart =</span> <span class="dv">1970</span>, <span class="dt">studyEnd =</span> <span class="dv">2000</span>,
+                     <span class="dt">model =</span> <span class="st">&quot;GO&quot;</span>, <span class="dt">shape =</span> <span class="st">&quot;bathtub&quot;</span>)
+<span class="co">#&gt; No problems were detected with the data.</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Starting simulation to find jump sd&#39;s...  done.</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Simulation started...</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Total MCMC computing time: 4.71 mins.</span></code></pre>
+<p>Take a look at the model summaries, and the trajectory plots produced.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(gbnc)
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Output from BaSTA version 1.9.3</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Call:</span>
+<span class="co">#&gt; Model                    : GO</span>
+<span class="co">#&gt; Shape                    : bathtub</span>
+<span class="co">#&gt; Covars. structure        : fused</span>
+<span class="co">#&gt; Minimum age              : 0</span>
+<span class="co">#&gt; Cat. covars.             : </span>
+<span class="co">#&gt; Cont. covars.            :   </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Model settings:</span>
+<span class="co">#&gt;    niter   burnin thinning     nsim </span>
+<span class="co">#&gt;    11000     1001       20        1 </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Jumps and priors:</span>
+<span class="co">#&gt;    Jump.sds Prior.means Prior.sds</span>
+<span class="co">#&gt; a0  2.48465       -2.00         1</span>
+<span class="co">#&gt; a1  4.76420        0.01         1</span>
+<span class="co">#&gt; c   0.02277        0.00         1</span>
+<span class="co">#&gt; b0  0.20074       -3.00         1</span>
+<span class="co">#&gt; b1  0.01581        0.01         1</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Mean Kullback-Leibler</span>
+<span class="co">#&gt; discrepancy calibration (KLDC):</span>
+<span class="co">#&gt; KLDC was not calculated due to insufficient number  of simulations to estimate convergence.</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Coefficients:</span>
+<span class="co">#&gt;         Estimate   StdErr Lower95%CI Upper95%CI SerAutocor UpdateRate</span>
+<span class="co">#&gt; a0      -4.31277 0.600863 -5.6826472   -3.28885     0.1233     0.2582</span>
+<span class="co">#&gt; a1       1.31275 0.793189  0.0264220    2.91030     0.1181     0.2482</span>
+<span class="co">#&gt; c        0.00894 0.007184  0.0003987    0.02611     0.5387     0.2546</span>
+<span class="co">#&gt; b0      -3.37058 0.189740 -3.8148460   -3.04326     0.8147     0.2556</span>
+<span class="co">#&gt; b1       0.11913 0.013589  0.0950934    0.14692     0.8204     0.2603</span>
+<span class="co">#&gt; pi.1970  0.50538 0.008515  0.4883308    0.52398     0.1712     1.0000</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Convergence:</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Convergence calculations require more than one run. </span>
+<span class="co">#&gt; To estimate potential scale reduction run at least two simulations.</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; DIC:</span>
+<span class="co">#&gt; DIC was not calculated due to insufficient number of simulations to estimate convergence.</span></code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(gbnc)</code></pre>
+<p><img src="figures/unnamed-chunk-5.png" title="plot of chunk unnamed-chunk-5" alt="plot of chunk unnamed-chunk-5" width="384" /></p>
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+$(document).ready(function () {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+});
+
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,62 @@
+---
+title: The shape argument
+layout: default
+output: bookdown::html_chapter
+---
+<!---
+1. Use standard R Markdown.
+2. Headings with "##" will be automatically turned into table of contents. Therefore, for longer tutorials please use this facility.
+3. Check that R studio will knit into an HTML document.
+4. You can contribute the .rmd file via GitHub (https://github.com/jonesor/learn-basta), **to the master branch ONLY**. To do that you must be a collaborator on the repository (contact me with your username), or you can fork the repository and send a pull request (https://help.github.com/articles/using-pull-requests/).
+5. Alternatively you can email me the *rmd file and associated files (e.g. any figures/diagrams.)
+6. I will then compile the site on my computer and push it to the gh-pages branch (which is where the website lives). You could also do this, but you will need to have Jekyll and pandoc installed.
+-->
+
+```{r, echo=FALSE, results='hide', message=FALSE}
+setwd("~/learn-basta")
+library(BaSTA)
+dat <- read.csv("data/fixedData.csv", header = TRUE)
+```
+
+
+## Introduction {#intro}
+
+There are three possible `shape` arguments in `basta`. These are `simple`, `Makeham` and `bathtub`. The `simple` argument specifies that the model should be fitted using the unaltered functional form for mortality (so far, this has been Gompertz). The other two arguments, `Makeham` and `bathtub` are modifiers to the underlying model adding in a term for age-independent mortality and an early-life decline in age-specific mortality respectively . If you've been working your way through these exercises you will have already fitted a Gompertz model with a `simple` shape - it is the default argument. This section will briefly run through the other two options.
+
+## Variations on the Gompertz - the bathtub shape argument {#shape-argument}
+
+Aficionados of the Gompertz function will already know that the model, although used to model mortality in many species, is not well suited to examining mortality before the age of maturity. This is because it does not allow for infant/juvenile mortality, which typically manifests as high mortality early in life, which declines with age. Thus, over the whole life course of a typical mammal, mortality starts high, declines with age towards maturity, and then increases again. One way of accounting for this kind of trajectory is to use a `bathtub` model such as the *Siler model*. This model features two Gompertz functions: a declining Gompertz function to capture the juvenile phase, and an increasing one after maturity which captures the senescence phase.
+
+## The Makeham argument {#makeham}
+
+But what if you *are* modelling mortality from maturity? In this case you may wish to check on the addition of a term for age-independent mortality. This is known as a *Makeham* term and can be specified as a shape argument in the basta model (`shape = "Makeham`). This adds a constant to the Gompertz model (which would then be referred to as a "*Gompertz-Makeham*" model). Note that the Siler model described above also features a term for age-independent mortality.
+
+Try fitting BaSTA models with these two variations.
+
+First the Gompertz-Makeham model:
+
+```{r, cache=TRUE}
+gmnc <- basta(dat, studyStart = 1970, studyEnd = 2000,
+                   model = "GO", shape = "Makeham")
+```
+
+Secondly the Gompertz-bathtub model (also known as a Siler model):
+
+```{r, cache=TRUE}
+gbnc <- basta(dat, studyStart = 1970, studyEnd = 2000,
+                     model = "GO", shape = "bathtub")
+```
+
+Take a look at the model summaries, and the trajectory plots produced.
+
+```{r}
+summary(gbnc)
+```
+
+```{r, fig.height=8,fig.width=4}
+plot(gbnc, plot.trace = FALSE)
+```
+
+
+
+

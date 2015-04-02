@@ -12,8 +12,74 @@ output: bookdown::html_chapter
 6. I will then compile the site on my computer and push it to the gh-pages branch (which is where the website lives). You could also do this, but you will need to have Jekyll and pandoc installed.
 -->
 
+```{r, echo=FALSE, results='hide', message=FALSE}
+setwd("~/learn-basta")
+library(BaSTA)
+```
+
 ## Introduction {#intro}
 
-Content is coming!
+In the previous section you learned how to format the data ready for analysis using `basta`. In this section we'll run through how to fit a simple Gompertz model - the default for BaSTA. This model will not have any covariates - we are simply going to estimate the coefficients of the fitted Gompertz model.
+
+## Fitting a Gompertz model {#gompertz}
+
+For this section, let's load the full dataset without errors... Read in the file 
+``fixedData.csv``, which we will simply call ``dat``...
+
+```{r}
+dat <- read.csv("data/fixedData.csv", header = TRUE)
+```
+
+Now you have created a BaSTA-ready data set its time to fit a simple model. In fact, if you successfully finished the last session, you will already have fitted a BaSTA model.
+
+To recap, this is how to do it...
+
+```{r, cache=TRUE}
+gsnc <- basta(dat, studyStart = 1970, studyEnd = 2000)
+```
+
+where, for simplicity we have named the BaSTA output object as `gsnc` which stands for _Gompertz, simple, no covariates_.
+
+You will notice that there are only three arguments to this function: the BaSTA data object, and the start and end years of the study. There are of course other arguments to the `basta()` function (see `?basta`). The most important ones concern the model structure. The default model, which the above code fits, is a standard Gompertz model with a `simple` shape. We will discuss the other options in a later section. 
+
+## Visualising the BaSTA outputs {#visualising-outputs}
+
+With BaSTA you can extract the outputs from the BaSTA objects in different ways. You can simply type the name of the object and the built-in function `print()` will recognise the object and produce the following output
+
+```{r}
+gsnc
+```
+
+To get more information, simply use function `summary()` like this:
+
+```{r}
+summary(gsnc)
+```
+
+In addition, the BaSTA object is recognised by function `plot()`, allowing you to plot different aspects of the outputs. For instance, to visually determine if the MCMC parameter chains or "traces" have converged, simply type:
+
+
+```{r, fig.height=7,fig.width=4}
+plot(gsnc)
+```
+
+which produces the trace plots for the mortality parameters. To make sure that the recapture probability has converged, use argument `trace.name = "pi"` as
+
+```{r, fig.height=7,fig.width=4}
+plot(gsnc, trace.name = "pi")
+```
+
+To plot the mortality and survival trajectories, use argument `plot.traces = FALSE`, which produces the following plot:
+
+```{r, fig.height=7,fig.width=4}
+plot(gsnc, plot.traces = FALSE)
+```
+
+## Fancy plots {#fancy-plots}
+Finally, you can produce what we call a "fancy plot" that combines the densities of the mortality parameters and the trajectories of mortality and survival into the same plot as
+
+```{r, eval=FALSE, fig.height=7,fig.width=4}
+plot(gsnc, fancy = TRUE)
+```
 
 

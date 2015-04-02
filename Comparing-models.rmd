@@ -12,8 +12,101 @@ output: bookdown::html_chapter
 6. I will then compile the site on my computer and push it to the gh-pages branch (which is where the website lives). You could also do this, but you will need to have Jekyll and pandoc installed.
 -->
 
+
+```{r, echo=FALSE, results='hide', message=FALSE}
+setwd("~/learn-basta")
+library(BaSTA)
+dat <- read.csv("data/fixedData.csv", header = TRUE)
+```
+
+
 ## Introduction {#intro}
 
-Content is coming!
+You will no doubt already have noticed that the two arguments concerning the mortality model, `model` and `shape` allow for a large number of variations. This section will explore these variations and introduce a new function `multibasta()` which simplifies fitting several models to the same data set.
+
+## Alternative functional forms: one at a time {#alternative-forms}
+
+To test other functional forms of age-specific mortality such as Weibull (REF), logistic (REF) or a simple model that assumes that mortality is constant at all ages (i.e. exponential survival), we can use the `model` argument in function `basta()`. For example, let's run a Weibull model that assumes that mortality is a power function of age, which only requires to add to the arguments of the function "`model = "WE"`". We will call the output object `wsnc` for "Weibull, simple, no covariates". Here is the updated code
+
+```{r, cache=TRUE}
+wsnc <- basta(dat, studyStart = 1970, studyEnd = 2000, model = "WE",
+              nsim = 2, ncpus = 2, parallel = TRUE)
+```
+
+As before, use function `summary()` as
+
+```{r}
+summary(wsnc)
+```
+
+You can use the function `plot` to confirm that the chains have converged properly with
+
+```{r, fig.height=4,fig.width=5}
+plot(wsnc)
+```
+
+Here is the fancy plot
+```{r, fig.height=4,fig.width=5}
+plot(wsnc, fancy = TRUE)
+```
+
+Now let's run a logistic model and compare it to the Gompertz and Weibull outputs. To do this, we only have to change the argument to `model = "LO"`. We will call the output object `lsnc` for "*logistic, simple, no covariates*."
+
+```{r, cache=TRUE}
+lsnc <- basta(dat, studyStart = 1970, studyEnd = 2000, model = "LO",
+              nsim = 2, ncpus = 2, parallel = TRUE)
+```
+
+which should produce a summary as
+
+```{r}
+summary(lsnc)
+```
+
+and a fancy plot that should look like the following
+
+```{r, fig.height=4,fig.width=5}
+plot(lsnc, fancy = TRUE)
+```
+
+## Go have a coffee... multibasta {#multibasta}
+
+With this version of BaSTA we provide the function `multibasta` which allows users to run different models and shapes without having to specify them one at a time. The only difference with function `basta()` is that, instead of specifying a single model and shape, we can use arguments `models` and `shapes` to specify more than one functional forms. Let's run once again the analysis above and we will store the results in the object `multinc`:
+
+```{r, cache=TRUE}
+multinc <- multibasta(dat, studyStart = 1970, studyEnd = 2000, 
+                      models = c("GO", "WE", "LO"), shapes = "simple",
+                      nsim = 2, ncpus = 2, parallel = TRUE)
+```
+## Model fit {#model-fit}
+
+To compare the outputs between parameters with different functional forms, BaSTA provides a measure of model fit known as Deviance Information Criterion, DIC (for a description see box 1). As with other information theoretic measures such as AIC or BIC, the model with the lowest DIC value is assumed to provide the best fit. To extract the DIC values and compare the models, we can simply refer to function `summary()` or type
+
+```{r}
+gsnc$DIC
+wsnc$DIC
+lsnc$DIC
+```
+
+Here is where using the output from function `multibasta()` might be a better option. We can visualize the results with function `summary()` as
+
+```{r}
+summary(multinc)
+```
+
+## Details -- Model Fit: Deviance Information Criterion, DIC
+
+
+If all parameters have converged, BaSTA calculates the deviance information criterion (DIC; Spiegelhalter, 2002), which has been described as a measure of predictive power and a criterion for model fit. DIC approximates the expected predictive deviance, and is calculated as
+
+$$
+\mathrm{DIC} = 2\hat{D}_{avg}(y) - D_{\hat{\theta}}(y),
+$$
+
+
+where $y$ denotes the observed data, $\hat{D}_{avg}(y)$ is the mean discrepancy between the data and the model as a function of the parameters $\theta$, averaged over the posterior distribution, and $D_{\hat{\theta}}(y)$ is the discrepancy at the posterior mode (here represented by the point estimate $\hat{\theta}$). In order to improve the measure provided, BaSTA's DIC is calculated as an approximation of the group-marginalized DIC presented by Millar (2009). 
+
+
+
 
 
