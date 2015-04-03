@@ -7,6 +7,7 @@
 
     <link href="www/bootstrap.min.css" rel="stylesheet">
     <link href="www/highlight.css" rel="stylesheet">
+    <link href="www/extras.css" rel="stylesheet">
 
     <link href='http://fonts.googleapis.com/css?family=Inconsolata:400,700'
       rel='stylesheet' type='text/css'>
@@ -172,26 +173,19 @@ save(gssc,file = "data/gssc.Rdata")
 <p>After running the model, you can verify if the inclusion of the sex covariate improved the fit by comparing the DICs between the <code>multiout</code> object and <code>gssc</code>. Now you can try to run the model for the Weibull and logistic models either individually (create objects called <code>wssc</code> and <code>lssc</code>) or in one go using <code>multibasta()</code> to create a multi-BaSTA object called <code>multisc</code>).</p>
 <h2 id="compare-parameter-estimates">Comparing parameter estimates for categorical covariates</h2>
 <p>To find out to what extent the parameter estimates between males and females differ, you should look at the <em>Mean Kulback-Leibler discrepancy calibration (KLDC)</em> values printed in from the <code>summary()</code> function. You can find a detailed explanation of the KLDC values below, but in short for a given parameter the KLDC tell us how much overlap there is between the posterior densities of the female and male estimate of the parameter. For instance, print run a summary of <code>gssc</code>, you will see that the KLDCs for <span class="math"><em>b</em><sub>0</sub></span> and <span class="math"><em>b</em><sub>1</sub></span> between males and females are close to 1, which implies that there is almost no overlap between the posterior densities. A value close to 0.5 would imply that there is a lot of overlap.</p>
-<!--- Commented out until I figure out how to render the maths.
-## Details: Comparing parameter densities: Kullback-Leibler discrepancies {#kullback-leibler}
-
-Within BaSTA, the Kullback-Leibler discrepancies (KLD; Kullback and Liebler 1951, McCulloch 1989) provide the user with a measure of how differently (or similarly) each categorical covariate affects survival.  For instance, we may wish to evaluate the differences in survival between males and females with a simple Gompertz model. To illustrate the calculation of KLD, lets take $b_0$, for which the resulting `sub-parameters' would be $\alpha_{f}$ and $\alpha_{m}$ such that, for an individual $i$, we have $b_0 = \alpha_f I_i + \alpha_m (1 - I_i)$, where $I_i$ is an indicator function that assigns 1 if the individual is a female and 0 otherwise. For each of these parameters, BaSTA produces a posterior density, say $P_f = p(\alpha_{f} | \dots)$ and $P_m = p(\alpha_{m} | \dots)$, respectively. The KLD between these densities is calculated as
-
-$K(P_f, P_m) = \int_{0}^{\infty} P_f \log\left(\frac{P_f}{P_m}\right) d\alpha$. 
-
-The result can be interpreted as how far off we would be if we tried to predict $\alpha_m$ from the posterior density of $\alpha_f$. If both densities are identical, then $K(P_f, P_m) = 0$, which suggests that there is no distinction between males and females for $b_0$. As the KLD values increase the discrepancy becomes larger. As you can inferred from the equation above, the relationship is asymmetric, namely $K(P_f, P_m) \neq K(P_m, P_f)$. 
-
-To make KLD easier to interpret, McCulloch (1989) proposed a simple calibration of the KLD values that reduces the asymmetry. This is as follows: Let $k = K(P_f, P_m)$ and $q(k)$ be a calibration function such that 
-
-$k & = & K(P_f,P_m) &=&  K\left\{B\left(\frac{1}{2}\right), B[q(k)]\right\}$,
-
-where $B(\frac{1}{2})$ is a Bernouilli distribution for an event with probability $1/2$ (i.e. same probability of success and failure). This calibration is then calculated as
-
-$q(k) = \frac{1 + (1 - e^{-2k})^{\frac{1}{2}}}{2}$ .
-
-Thus, $q(k)$ ranges from 0.5 to 1, where a value of 0.5 means that the posterior densities are identical, and 1 that there is no overlap between them.
-
--->
+<div class="exercise-box">
+<h4>Comparing parameter densities: Kullback-Leibler discrepancies</h4>
+<div class="box-text">
+<p>Within BaSTA, the Kullback-Leibler discrepancies (KLD; Kullback and Liebler 1951, McCulloch 1989) provide the user with a measure of how differently (or similarly) each categorical covariate affects survival. For instance, we may wish to evaluate the differences in survival between males and females with a simple Gompertz model. To illustrate the calculation of KLD, lets take <span class="math"><em>b</em><sub>0</sub></span>, for which the resulting `sub-parameters’ would be <span class="math"><em>α</em><sub><em>f</em></sub></span> and <span class="math"><em>α</em><sub><em>m</em></sub></span> such that, for an individual <span class="math"><em>i</em></span>, we have <span class="math"><em>b</em><sub>0</sub> = <em>α</em><sub><em>f</em></sub><em>I</em><sub><em>i</em></sub> + <em>α</em><sub><em>m</em></sub>(1 − <em>I</em><sub><em>i</em></sub>)</span>, where <span class="math"><em>I</em><sub><em>i</em></sub></span> is an indicator function that assigns 1 if the individual is a female and 0 otherwise. For each of these parameters, BaSTA produces a posterior density, say <span class="math"><em>P</em><sub><em>f</em></sub> = <em>p</em>(<em>α</em><sub><em>f</em></sub>|…)</span> and <span class="math"><em>P</em><sub><em>m</em></sub> = <em>p</em>(<em>α</em><sub><em>m</em></sub>|…)</span>, respectively. The KLD between these densities is calculated as</p>
+<p><span class="math">$K(P_f, P_m) = \int_{0}^{\infty} P_f \log\left(\frac{P_f}{P_m}\right) d\alpha$</span>.</p>
+<p>The result can be interpreted as how far off we would be if we tried to predict <span class="math"><em>α</em><sub><em>m</em></sub></span> from the posterior density of <span class="math"><em>α</em><sub><em>f</em></sub></span>. If both densities are identical, then <span class="math"><em>K</em>(<em>P</em><sub><em>f</em></sub>, <em>P</em><sub><em>m</em></sub>) = 0</span>, which suggests that there is no distinction between males and females for <span class="math"><em>b</em><sub>0</sub></span>. As the KLD values increase the discrepancy becomes larger. As you can inferred from the equation above, the relationship is asymmetric, namely <span class="math"><em>K</em>(<em>P</em><sub><em>f</em></sub>, <em>P</em><sub><em>m</em></sub>) ≠ <em>K</em>(<em>P</em><sub><em>m</em></sub>, <em>P</em><sub><em>f</em></sub>)</span>.</p>
+<p>To make KLD easier to interpret, McCulloch (1989) proposed a simple calibration of the KLD values that reduces the asymmetry. This is as follows: Let <span class="math"><em>k</em> = <em>K</em>(<em>P</em><sub><em>f</em></sub>, <em>P</em><sub><em>m</em></sub>)</span> and <span class="math"><em>q</em>(<em>k</em>)</span> be a calibration function such that</p>
+<p><span class="math">$k &amp; = &amp; K(P_f,P_m) &amp;=&amp; K\left\{B\left(\frac{1}{2}\right), B[q(k)]\right\}$</span>,</p>
+<p>where <span class="math">$B(\frac{1}{2})$</span> is a Bernouilli distribution for an event with probability <span class="math">1/2</span> (i.e. same probability of success and failure). This calibration is then calculated as</p>
+<p><span class="math">$q(k) = \frac{1 + (1 - e^{-2k})^{\frac{1}{2}}}{2}$</span> .</p>
+<p>Thus, <span class="math"><em>q</em>(<em>k</em>)</span> ranges from 0.5 to 1, where a value of 0.5 means that the posterior densities are identical, and 1 that there is no overlap between them.</p>
+</div>
+</div>
 <h2 id="covariate-structure">Changing the structure of the covariates</h2>
 <p>As you might have notticed, BaSTA by default assigns any categorical covariate as a function of the mortality parameters. We can change this in case we believe that these covariates only affect mortality proportionally, using a proportional hazards model. This is simply done with argument <code>covarsStruct = &quot;prop.haz&quot;</code>:</p>
 <pre class="sourceCode r"><code class="sourceCode r">gsscph &lt;-<span class="st"> </span><span class="kw">basta</span>(datCovs, <span class="dt">studyStart =</span> <span class="dv">1970</span>, <span class="dt">studyEnd =</span> <span class="dv">2000</span>, <span class="dt">model =</span> <span class="st">&quot;LO&quot;</span>,
