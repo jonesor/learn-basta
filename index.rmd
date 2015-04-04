@@ -15,7 +15,7 @@ embed_png("figures/bastalogo.png", dpi = 220)
 BaSTA is an R package that allows users to draw inference on age-specific survival and mortality patterns from capture-recapture/recovery data when a large number of individuals (or all) have missing age information (Colchero, Jones and Rebke 2012). BaSTA is based on a model developed by Colchero and Clark (2012), which extends inference from parameter estimates to the estimation of unknown (i.e. latent) times of birth and death. The package also allows testing the effect of categorical and continuous individual covariates on mortality and survival.
 
 
-# Contents
+#### Contents
 
 <ul class="toc">
   {% include basta-nav.html %}
