@@ -15,6 +15,29 @@
 
   <body>
 
+<style TYPE="text/css">
+code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
+</style>
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'] // removed 'code' entry
+    }
+});
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+
+
+
     <div class="container">
 
       <div class="masthead">
@@ -177,12 +200,21 @@ save(gssc,file = "data/gssc.Rdata")
 <h4>Comparing parameter densities: Kullback-Leibler discrepancies</h4>
 <div class="box-text">
 <p>Within BaSTA, the Kullback-Leibler discrepancies (KLD; Kullback and Liebler 1951, McCulloch 1989) provide the user with a measure of how differently (or similarly) each categorical covariate affects survival. For instance, we may wish to evaluate the differences in survival between males and females with a simple Gompertz model. To illustrate the calculation of KLD, lets take <span class="math"><em>b</em><sub>0</sub></span>, for which the resulting `sub-parameters’ would be <span class="math"><em>α</em><sub><em>f</em></sub></span> and <span class="math"><em>α</em><sub><em>m</em></sub></span> such that, for an individual <span class="math"><em>i</em></span>, we have <span class="math"><em>b</em><sub>0</sub> = <em>α</em><sub><em>f</em></sub><em>I</em><sub><em>i</em></sub> + <em>α</em><sub><em>m</em></sub>(1 − <em>I</em><sub><em>i</em></sub>)</span>, where <span class="math"><em>I</em><sub><em>i</em></sub></span> is an indicator function that assigns 1 if the individual is a female and 0 otherwise. For each of these parameters, BaSTA produces a posterior density, say <span class="math"><em>P</em><sub><em>f</em></sub> = <em>p</em>(<em>α</em><sub><em>f</em></sub>|…)</span> and <span class="math"><em>P</em><sub><em>m</em></sub> = <em>p</em>(<em>α</em><sub><em>m</em></sub>|…)</span>, respectively. The KLD between these densities is calculated as</p>
-<p><span class="math">$K(P_f, P_m) = \int_{0}^{\infty} P_f \log\left(\frac{P_f}{P_m}\right) d\alpha$</span>.</p>
+<p><br /><span class="math">$$
+K(P_f, P_m) = \int_{0}^{\infty} P_f \log\left(\frac{P_f}{P_m}\right) d\alpha.
+$$</span><br /></p>
 <p>The result can be interpreted as how far off we would be if we tried to predict <span class="math"><em>α</em><sub><em>m</em></sub></span> from the posterior density of <span class="math"><em>α</em><sub><em>f</em></sub></span>. If both densities are identical, then <span class="math"><em>K</em>(<em>P</em><sub><em>f</em></sub>, <em>P</em><sub><em>m</em></sub>) = 0</span>, which suggests that there is no distinction between males and females for <span class="math"><em>b</em><sub>0</sub></span>. As the KLD values increase the discrepancy becomes larger. As you can inferred from the equation above, the relationship is asymmetric, namely <span class="math"><em>K</em>(<em>P</em><sub><em>f</em></sub>, <em>P</em><sub><em>m</em></sub>) ≠ <em>K</em>(<em>P</em><sub><em>m</em></sub>, <em>P</em><sub><em>f</em></sub>)</span>.</p>
 <p>To make KLD easier to interpret, McCulloch (1989) proposed a simple calibration of the KLD values that reduces the asymmetry. This is as follows: Let <span class="math"><em>k</em> = <em>K</em>(<em>P</em><sub><em>f</em></sub>, <em>P</em><sub><em>m</em></sub>)</span> and <span class="math"><em>q</em>(<em>k</em>)</span> be a calibration function such that</p>
-<p><span class="math">$k &amp; = &amp; K(P_f,P_m) &amp;=&amp; K\left\{B\left(\frac{1}{2}\right), B[q(k)]\right\}$</span>,</p>
+<p><br /><span class="math">$$
+\begin{eqnarray*}
+k &amp; = &amp; K(P_f,P_m) \\
+&amp;=&amp;  K\left\{B\left(\frac{1}{2}\right), B[q(k)]\right\},
+\end{eqnarray*}
+$$</span><br /></p>
 <p>where <span class="math">$B(\frac{1}{2})$</span> is a Bernouilli distribution for an event with probability <span class="math">1/2</span> (i.e. same probability of success and failure). This calibration is then calculated as</p>
-<p><span class="math">$q(k) = \frac{1 + (1 - e^{-2k})^{\frac{1}{2}}}{2}$</span> .</p>
+<p><br /><span class="math">$$
+q(k) = \frac{1 + (1 - e^{-2k})^{\frac{1}{2}}}{2}
+$$</span><br /> .</p>
 <p>Thus, <span class="math"><em>q</em>(<em>k</em>)</span> ranges from 0.5 to 1, where a value of 0.5 means that the posterior densities are identical, and 1 that there is no overlap between them.</p>
 </div>
 </div>

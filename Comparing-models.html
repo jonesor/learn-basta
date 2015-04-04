@@ -15,6 +15,29 @@
 
   <body>
 
+<style TYPE="text/css">
+code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
+</style>
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'] // removed 'code' entry
+    }
+});
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+
+
+
     <div class="container">
 
       <div class="masthead">
@@ -223,7 +246,9 @@ lsnc$DIC</code></pre>
 <h4>Model Fit: Deviance Information Criterion, DIC</h4>
 <div class="box-text">
 <p>If all parameters have converged, BaSTA calculates the deviance information criterion (DIC; Spiegelhalter, 2002), which has been described as a measure of predictive power and a criterion for model fit. DIC approximates the expected predictive deviance, and is calculated as</p>
-<p><span class="math">$\mathrm{DIC} = 2\hat{D}_{avg}(y) - D_{\hat{\theta}}(y)$</span></p>
+<p><br /><span class="math">$$
+\mathrm{DIC} = 2\hat{D}_{avg}(y) - D_{\hat{\theta}}(y),
+$$</span><br /></p>
 <p>where <span class="math"><em>y</em></span> denotes the observed data, <span class="math">$\hat{D}_{avg}(y)$</span> is the mean discrepancy between the data and the model as a function of the parameters <span class="math"><em>θ</em></span>, averaged over the posterior distribution, and <span class="math">$D_{\hat{\theta}}(y)$</span> is the discrepancy at the posterior mode (here represented by the point estimate <span class="math">$\hat{\theta}$</span>). In order to improve the measure provided, BaSTA’s DIC is calculated as an approximation of the group-marginalized DIC presented by Millar (2009).</p>
 </div>
 </div>
