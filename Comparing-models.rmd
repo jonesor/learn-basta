@@ -134,7 +134,9 @@ summary(multinc)
 <div class="box-text">
 If all parameters have converged, BaSTA calculates the deviance information criterion (DIC; Spiegelhalter, 2002), which has been described as a measure of predictive power and a criterion for model fit. DIC approximates the expected predictive deviance, and is calculated as
 
-$\mathrm{DIC} = 2\hat{D}_{avg}(y) - D_{\hat{\theta}}(y)$
+$$
+\mathrm{DIC} = 2\hat{D}_{avg}(y) - D_{\hat{\theta}}(y),
+$$
 
 
 where $y$ denotes the observed data, $\hat{D}_{avg}(y)$ is the mean discrepancy between the data and the model as a function of the parameters $\theta$, averaged over the posterior distribution, and $D_{\hat{\theta}}(y)$ is the discrepancy at the posterior mode (here represented by the point estimate $\hat{\theta}$). In order to improve the measure provided, BaSTA's DIC is calculated as an approximation of the group-marginalized DIC presented by Millar (2009). 

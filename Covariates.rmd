@@ -110,17 +110,26 @@ To find out to what extent the parameter estimates between males and females dif
 
 Within BaSTA, the Kullback-Leibler discrepancies (KLD; Kullback and Liebler 1951, McCulloch 1989) provide the user with a measure of how differently (or similarly) each categorical covariate affects survival.  For instance, we may wish to evaluate the differences in survival between males and females with a simple Gompertz model. To illustrate the calculation of KLD, lets take $b_0$, for which the resulting `sub-parameters' would be $\alpha_{f}$ and $\alpha_{m}$ such that, for an individual $i$, we have $b_0 = \alpha_f I_i + \alpha_m (1 - I_i)$, where $I_i$ is an indicator function that assigns 1 if the individual is a female and 0 otherwise. For each of these parameters, BaSTA produces a posterior density, say $P_f = p(\alpha_{f} | \dots)$ and $P_m = p(\alpha_{m} | \dots)$, respectively. The KLD between these densities is calculated as
 
-$K(P_f, P_m) = \int_{0}^{\infty} P_f \log\left(\frac{P_f}{P_m}\right) d\alpha$. 
+$$
+K(P_f, P_m) = \int_{0}^{\infty} P_f \log\left(\frac{P_f}{P_m}\right) d\alpha.
+$$
 
 The result can be interpreted as how far off we would be if we tried to predict $\alpha_m$ from the posterior density of $\alpha_f$. If both densities are identical, then $K(P_f, P_m) = 0$, which suggests that there is no distinction between males and females for $b_0$. As the KLD values increase the discrepancy becomes larger. As you can inferred from the equation above, the relationship is asymmetric, namely $K(P_f, P_m) \neq K(P_m, P_f)$. 
 
 To make KLD easier to interpret, McCulloch (1989) proposed a simple calibration of the KLD values that reduces the asymmetry. This is as follows: Let $k = K(P_f, P_m)$ and $q(k)$ be a calibration function such that 
 
-$k & = & K(P_f,P_m) &=&  K\left\{B\left(\frac{1}{2}\right), B[q(k)]\right\}$,
+$$
+\begin{eqnarray*}
+k & = & K(P_f,P_m) \\
+&=&  K\left\{B\left(\frac{1}{2}\right), B[q(k)]\right\},
+\end{eqnarray*}
+$$
 
 where $B(\frac{1}{2})$ is a Bernouilli distribution for an event with probability $1/2$ (i.e. same probability of success and failure). This calibration is then calculated as
 
-$q(k) = \frac{1 + (1 - e^{-2k})^{\frac{1}{2}}}{2}$ .
+$$
+q(k) = \frac{1 + (1 - e^{-2k})^{\frac{1}{2}}}{2}
+$$ .
 
 Thus, $q(k)$ ranges from 0.5 to 1, where a value of 0.5 means that the posterior densities are identical, and 1 that there is no overlap between them.
 </div>
