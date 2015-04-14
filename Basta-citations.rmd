@@ -22,6 +22,8 @@ Since the BaSTA package was published in 2012 it has been cited a few times. Ini
 
 Boonekamp, J.J., Salomons, M., Bouwhuis, S., Dijkstra, C. & Verhulst, S. (2015). Addendum to: Reproductive effort accelerates actuarial senescence in wild birds: an experimental study. Ecology Letters (2015) 18: 315–315. doi: 10.1111/ele.12404
 
+Larson, S. M., Colchero, F., Jones, O. R., Williams, L. and Fernandez-Duque, E. (2015), Age and sex-specific mortality of wild and captive populations of a monogamous pair-bonded primate (Aotus azarae). Am. J. Primatol.. doi: 10.1002/ajp.22408
+
 Moustakas, A. and Evans, M. (2015) Effects of growth rate, size, and light availability on tree survival across life stages: a demographic analysis accounting for missing values and small sample sizes. BMC Ecology 2015, 15:6  doi: 10.1186/s12898-015-0038-8
 
 ## 2014 {#cite-2014}
